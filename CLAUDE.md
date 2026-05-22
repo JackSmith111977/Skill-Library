@@ -106,7 +106,16 @@ allowed-tools: [Read, Bash]   # 可选
 Skill Library/
 ├── CLAUDE.md                   # 本文件（开发规则）
 ├── PRD.md                      # 产品需求文档
+├── IMPLEMENTATION.md           # 实现技术文档
+├── PROGRESS.md                 # 开发进度索引
 ├── docs-alignment.json         # 文档对齐状态机
+├── epics/                      # Epic/Story 独立文件
+│   ├── E1-data-foundation/
+│   │   ├── EPIC.md             # Epic 概述
+│   │   ├── S1-state-schema.md  # Story 独立文件
+│   │   └── ...
+│   ├── E2-quality-engine/
+│   └── ...
 ├── config.json                 # 技能库配置
 ├── state.json                  # 状态机（single source of truth）
 ├── skills/                     # Skill 仓库（按技能包组织）
