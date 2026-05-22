@@ -1,6 +1,6 @@
 # Skill Library 产品需求文档（PRD）
 
-> 版本：1.5.0 | 更新：2026-05-23
+> 版本：1.6.0 | 更新：2026-05-23
 
 ## 1. 项目概述
 
@@ -437,3 +437,47 @@ skill-manager、skill-creator、workflow-creator 三者都是标准 SKILL.md 格
 - Inversion 模板：采访阶段 → STAGE_GATE → 执行阶段，硬性门控
 - 循环依赖检测：步骤间不能循环引用
 - 自验证：创建后 `skill-manager lint` 确认工作流 4 项额外规则通过
+
+---
+
+## 12. 用户文档规范
+
+### 12.1 README 要求
+
+README.md 是本项目的对外入口文档，必须同时服务于人类读者和 AI Agent 读者：
+
+- 标题下方显式体现"Skill 即接口"设计哲学
+- 提供任意 Agent 可执行的安装路径（meta-skill 目录复制），不得以 CLI 为唯一入口
+- 将 meta-skill 文件操作（cp/rm）列为默认操作方式，CLI 列为可选便捷层
+- 包含清晰的文件路径说明，便于 Agent 直接执行文件操作
+- 项目状态反映最新的 Epic/Story/Test 数量
+- 按"做什么 → 怎么做"优先级组织：定位 → 安装 → 概念 → 参考
+
+### 12.2 安装路径规范
+
+两条路径，按优先级排列：
+
+**路径一：Meta-Skill 复制（主路径，any-agent）**
+- 适用于任何支持 agentskills.io 标准的 Agent 平台
+- 操作方式：`cp -r <skill-dir> <agent-skill-dir>/`
+- 前置依赖：cp/rm 等标准文件系统操作，无需 Python 运行时
+- 适用范围：Claude Code、Hermes、OpenClaw 等所有支持 SKILL.md 的 Agent
+
+**路径二：Pip 安装（可选路径，human-first）**
+- 适用于需要 CLI 交互的人类开发者
+- 操作方式：`pip install -e .` + `skill-manager <command>`
+- 前置依赖：Python 3.11+、pip
+- 适用范围：本地开发、调试、CI/CD 管道
+
+### 12.3 AGENTS.md 概念（新兴标准）
+
+AGENTS.md 是 Agent Skills 生态中正在形成的最佳实践——项目根目录放置一份面向 Agent 的简版文档，内容聚焦于"Agent 如何发现和安装此项目的 skill"。本项目当前通过 README.md 承载此角色，未来可考虑拆分：
+
+| 维度 | README.md | AGENTS.md（未来） |
+|------|-----------|-------------------|
+| 受众 | 人类 + Agent | 仅 Agent |
+| 内容 | 定位 + 安装 + 概念 + 开发 | 安装路径 + 可用 skill 清单 |
+| 复杂度 | 完整 | 精简 |
+| 层级 | L1-L3 | 仅 L1 |
+
+当前阶段：README.md 在"For Agents"段落中提供 Agent 可直接执行的安装指引。

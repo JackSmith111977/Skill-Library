@@ -44,8 +44,9 @@ stateDiagram-v2
 | E13 | 生态完善 | 4 | `done` | [EPIC.md](epics/E13-ecosystem/EPIC.md) |
 | E14 | Skill 创建元技能 | 2 | `done` | [EPIC.md](epics/E14-skill-creators/EPIC.md) |
 | E15 | skill-manager 元 Skill 重写 | 5 | `done` | [EPIC.md](epics/E15-skill-manager-rewrite/EPIC.md) |
+| E16 | 用户文档体系完善 | 3 | `done` | [EPIC.md](epics/E16-readme-rewrite/EPIC.md) |
 
-**总计**：15 个 Epic，76 个 Story
+**总计**：16 个 Epic，79 个 Story
 
 ## 文件结构
 
@@ -169,3 +170,8 @@ graph TD
 | 2026-05-23 | E15 | E15-S4 | pending → done | 交叉引用修复完成 |
 | 2026-05-23 | E15 | E15-S5 | pending → done | 最终验证通过，3/3 skill score 100 |
 | 2026-05-23 | E15 | - | Epic 完成 | 5 个 Story 全部完成，无代码改动
+| 2026-05-23 | E16 | - | `pending` → `in_progress` | Epic 创建，开始 E16-S1 PRD 更新 |
+| 2026-05-23 | E16 | E16-S1 | `in_progress` → `done` | PRD §12 用户文档规范追加完成，v1.5.0→v1.6.0 |
+| 2026-05-23 | E16 | E16-S2 | `pending` → `done` | README 全文重写完成，CLI-centric → Skill-first，v1.0.0→v1.1.0 |
+| 2026-05-23 | E16 | E16-S3 | `pending` → `done` | docs-alignment.json 同步，验证通过 |
+| 2026-05-23 | E16 | - | Epic 完成 | 3 个 Story 全部完成，文档类改动，无代码变更 |
