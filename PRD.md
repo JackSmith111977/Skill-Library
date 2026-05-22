@@ -1,6 +1,6 @@
 # Skill Library 产品需求文档（PRD）
 
-> 版本：1.1.0 | 更新：2026-05-22
+> 版本：1.2.0 | 更新：2026-05-22
 
 ## 1. 项目概述
 
@@ -108,14 +108,33 @@ skill-name/
 }
 ```
 
-**Agent 类型枚举**（待调研补充）：
+**Agent 类型枚举**：
 
 | Agent | 格式规范 | 适配状态 |
 |-------|----------|----------|
-| generic | 通用 SKILL.md 规范 | 首要实现 |
-| claude-code | Claude Code skill 规范 | 待调研 |
+| generic | 通用 SKILL.md 规范（6 个标准字段） | 首要实现 |
+| claude-code | Claude Code 扩展规范（+6 个扩展字段） | 已调研 ✅ |
 | hermes | Hermes Agent 格式 | 待调研 |
 | openclaw | OpenClaw 格式 | 待调研 |
+
+**Claude Code 扩展字段**（来源：agentskills.io + Claude Code 文档）：
+
+| 字段 | 类型 | 说明 |
+|------|------|------|
+| `disable-model-invocation` | boolean | 设为 `true` 则只能手动调用（`/skill-name`），Claude 不会自动触发 |
+| `user-invocable` | boolean | 设为 `false` 则仅允许 Claude 自动触发，不出现在 `/` 菜单 |
+| `context` | string | 设为 `fork` 可在子代理中隔离运行 |
+| `agent` | string | 指定子代理类型：`Explore`（Haiku/只读）、`Plan`（继承/只读）、`general-purpose`（继承/全部） |
+| `model` | string | 覆盖模型选择 |
+| `argument-hint` | string | 参数提示，显示在 `/skill-name` 后 |
+
+**Claude Code 特有功能**：
+
+| 功能 | 语法 | 说明 |
+|------|------|------|
+| 动态上下文注入 | `` !`command` `` | 预执行 shell 命令，输出内嵌到提示词（预处理，非 Claude 执行） |
+| 参数占位符 | `$ARGUMENTS`、`$0`、`$1` | 捕获 `/skill-name` 后的输入参数 |
+| 存放位置 | 4 级优先级 | 企业 > 个人 > 项目 > 插件 |
 
 ---
 
