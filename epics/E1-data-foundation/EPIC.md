@@ -10,17 +10,18 @@
 | 优先级 | P0 |
 | Story 数 | 5 |
 | 依赖 | 无 |
-| 状态 | `pending` |
+| 状态 | `done` |
+| 完成时间 | 2026-05-22 |
 
 ## Story 列表
 
 | ID | Story | 状态 | 依赖 |
 |----|-------|------|------|
-| E1-S1 | state.json 三段式结构定义 | `pending` | - |
-| E1-S2 | config.json 结构定义 | `pending` | - |
-| E1-S3 | state.json 读写函数 | `pending` | E1-S1 |
-| E1-S4 | config.json 读写函数 | `pending` | E1-S2 |
-| E1-S5 | 状态值枚举定义 | `pending` | - |
+| E1-S1 | state.json 三段式结构定义 | `done` | - |
+| E1-S2 | config.json 结构定义 | `done` | - |
+| E1-S3 | state.json 读写函数 | `done` | E1-S1 |
+| E1-S4 | config.json 读写函数 | `done` | E1-S2 |
+| E1-S5 | 状态值枚举定义 | `done` | - |
 
 ## 测试门禁
 

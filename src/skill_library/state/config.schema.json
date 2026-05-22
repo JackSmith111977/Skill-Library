@@ -1,0 +1,43 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://skill-library.dev/schemas/config.json",
+  "title": "Skill Library Config",
+  "description": "Skill Library 配置文件 schema",
+  "type": "object",
+  "required": ["library-path", "agents"],
+  "properties": {
+    "library-path": {
+      "type": "string",
+      "description": "技能库绝对路径"
+    },
+    "agents": {
+      "type": "object",
+      "description": "Agent 配置，key 为 agent-id",
+      "patternProperties": {
+        "^[a-z][a-z0-9-]{0,62}[a-z0-9]$": {
+          "$ref": "#/definitions/agentConfig"
+        }
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false,
+  "definitions": {
+    "agentConfig": {
+      "type": "object",
+      "description": "单个 Agent 配置",
+      "required": ["path"],
+      "properties": {
+        "path": {
+          "type": "string",
+          "description": "Agent skill 安装路径（绝对路径）"
+        },
+        "description": {
+          "type": "string",
+          "description": "Agent 描述"
+        }
+      },
+      "additionalProperties": false
+    }
+  }
+}

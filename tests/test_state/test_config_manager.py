@@ -1,0 +1,177 @@
+"""E1-S4: config.json 读写函数测试"""
+
+import json
+import pytest
+from pathlib import Path
+
+from skill_library.state.config import ConfigManager
+
+
+@pytest.fixture
+def tmp_config(tmp_path):
+    """临时 config.json 路径"""
+    return tmp_path / "config.json"
+
+
+@pytest.fixture
+def manager(tmp_config):
+    """ConfigManager 实例"""
+    return ConfigManager(tmp_config)
+
+
+@pytest.fixture
+def sample_config():
+    """示例配置数据"""
+    return {
+        "library-path": "D:\\WorkPlace\\VibeCoding\\Skill Library",
+        "agents": {
+            "claude-code-main": {
+                "path": "C:\\Users\\Kei\\.claude\\skills",
+                "description": "主开发环境"
+            }
+        }
+    }
+
+
+# ===== load 测试 =====
+
+def test_load_valid(manager, tmp_config, sample_config):
+    """加载合法 config.json"""
+    tmp_config.write_text(json.dumps(sample_config), encoding="utf-8")
+    result = manager.load()
+    assert result == sample_config
+
+
+def test_load_missing(manager):
+    """文件不存在 → 抛出异常"""
+    with pytest.raises(FileNotFoundError):
+        manager.load()
+
+
+def test_load_invalid_json(manager, tmp_config):
+    """JSON 格式错误 → 抛出异常"""
+    tmp_config.write_text("invalid json", encoding="utf-8")
+    with pytest.raises(ValueError, match="格式错误"):
+        manager.load()
+
+
+# ===== save 测试 =====
+
+def test_save_creates_file(manager, sample_config):
+    """save 创建文件"""
+    assert not manager.path.exists()
+    manager.save(sample_config)
+    assert manager.path.exists()
+
+
+def test_save_content_correct(manager, sample_config):
+    """save 内容正确"""
+    manager.save(sample_config)
+    with open(manager.path, "r", encoding="utf-8") as f:
+        result = json.load(f)
+    assert result == sample_config
+
+
+def test_save_creates_parent_dirs(tmp_path, sample_config):
+    """save 自动创建父目录"""
+    nested_path = tmp_path / "a" / "b" / "config.json"
+    manager = ConfigManager(nested_path)
+    manager.save(sample_config)
+    assert nested_path.exists()
+
+
+def test_save_invalid_library_path(manager):
+    """library-path 不是绝对路径 → 抛出异常"""
+    config = {
+        "library-path": "relative/path",
+        "agents": {}
+    }
+    with pytest.raises(ValueError, match="路径校验失败"):
+        manager.save(config)
+
+
+def test_save_invalid_agent_path(manager):
+    """agent path 不是绝对路径 → 抛出异常"""
+    config = {
+        "library-path": "D:\\test",
+        "agents": {
+            "test-agent": {"path": "relative/path"}
+        }
+    }
+    with pytest.raises(ValueError, match="路径校验失败"):
+        manager.save(config)
+
+
+def test_save_missing_library_path(manager):
+    """缺少 library-path → 抛出异常"""
+    config = {"agents": {}}
+    with pytest.raises(ValueError, match="路径校验失败"):
+        manager.save(config)
+
+
+# ===== validate_paths 测试 =====
+
+def test_validate_absolute_paths(manager, sample_config):
+    """绝对路径 → 校验通过"""
+    errors = manager.validate_paths(sample_config)
+    assert errors == []
+
+
+def test_validate_relative_library_path(manager):
+    """相对 library-path → 校验失败"""
+    config = {"library-path": "relative", "agents": {}}
+    errors = manager.validate_paths(config)
+    assert len(errors) == 1
+    assert "绝对路径" in errors[0]
+
+
+def test_validate_relative_agent_path(manager):
+    """相对 agent path → 校验失败"""
+    config = {
+        "library-path": "D:\\test",
+        "agents": {"test-agent": {"path": "relative"}}
+    }
+    errors = manager.validate_paths(config)
+    assert len(errors) == 1
+    assert "绝对路径" in errors[0]
+
+
+def test_validate_missing_library_path(manager):
+    """缺少 library-path → 校验失败"""
+    config = {"agents": {}}
+    errors = manager.validate_paths(config)
+    assert len(errors) == 1
+    assert "缺少" in errors[0]
+
+
+def test_validate_missing_agent_path(manager):
+    """agent 缺少 path → 校验失败"""
+    config = {
+        "library-path": "D:\\test",
+        "agents": {"test-agent": {"description": "test"}}
+    }
+    errors = manager.validate_paths(config)
+    assert len(errors) == 1
+    assert "缺少" in errors[0]
+
+
+def test_validate_multiple_errors(manager):
+    """多个错误"""
+    config = {
+        "library-path": "relative",
+        "agents": {
+            "agent-1": {"path": "relative1"},
+            "agent-2": {"path": "relative2"}
+        }
+    }
+    errors = manager.validate_paths(config)
+    assert len(errors) == 3
+
+
+# ===== 集成测试 =====
+
+def test_load_save_roundtrip(manager, sample_config):
+    """load → save → load 往返测试"""
+    manager.save(sample_config)
+    loaded = manager.load()
+    assert loaded == sample_config

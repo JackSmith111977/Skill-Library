@@ -29,7 +29,7 @@ stateDiagram-v2
 
 | Epic | 主题 | Story 数 | 状态 | 详情 |
 |------|------|----------|------|------|
-| E1 | 数据基础层 | 5 | `pending` | [EPIC.md](epics/E1-data-foundation/EPIC.md) |
+| E1 | 数据基础层 | 5 | `done` | [EPIC.md](epics/E1-data-foundation/EPIC.md) |
 | E2 | 质量检测引擎 | 8 | `pending` | [EPIC.md](epics/E2-quality-engine/EPIC.md) |
 | E3 | Skill Registry | 6 | `pending` | [EPIC.md](epics/E3-skill-registry/EPIC.md) |
 | E4 | 状态机引擎 | 8 | `pending` | [EPIC.md](epics/E4-state-machine/EPIC.md) |
@@ -93,3 +93,14 @@ graph TD
 | 日期 | Epic | Story | 状态变更 | 备注 |
 |------|------|-------|----------|------|
 | 2026-05-22 | - | - | 初始化 | 文档创建，Epic/Story 结构建立 |
+| 2026-05-22 | E1 | E1-S1 | pending → in_progress | 开始开发 state.json Schema |
+| 2026-05-22 | E1 | E1-S1 | in_progress → done | 23 个测试全部通过 |
+| 2026-05-22 | E1 | E1-S2 | pending → in_progress | 开始开发 config.json Schema |
+| 2026-05-22 | E1 | E1-S2 | in_progress → done | 10 个测试全部通过 |
+| 2026-05-22 | E1 | E1-S3 | pending → in_progress | 开始开发 state.json 读写函数 |
+| 2026-05-22 | E1 | E1-S3 | in_progress → done | 12 个测试全部通过 |
+| 2026-05-22 | E1 | E1-S4 | pending → in_progress | 开始开发 config.json 读写函数 |
+| 2026-05-22 | E1 | E1-S4 | in_progress → done | 16 个测试全部通过 |
+| 2026-05-22 | E1 | E1-S5 | pending → in_progress | 开始开发状态值枚举 |
+| 2026-05-22 | E1 | E1-S5 | in_progress → done | 18 个测试全部通过 |
+| 2026-05-22 | E1 | - | Epic 完成 | 5 个 Story 全部完成，79 个测试通过 |

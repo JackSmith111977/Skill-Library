@@ -1,0 +1,210 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://skill-library.dev/schemas/state.json",
+  "title": "Skill Library State",
+  "description": "Skill Library 状态机 schema，三段式结构：library / agents / skills",
+  "type": "object",
+  "required": ["library", "agents", "skills"],
+  "properties": {
+    "library": {
+      "$ref": "#/definitions/library"
+    },
+    "agents": {
+      "$ref": "#/definitions/agents"
+    },
+    "skills": {
+      "$ref": "#/definitions/skills"
+    }
+  },
+  "definitions": {
+    "library": {
+      "type": "object",
+      "description": "技能库元数据",
+      "required": ["path", "created-at", "last-sync"],
+      "properties": {
+        "path": {
+          "type": "string",
+          "description": "技能库绝对路径"
+        },
+        "created-at": {
+          "type": "string",
+          "format": "date",
+          "description": "创建日期（YYYY-MM-DD）"
+        },
+        "last-sync": {
+          "type": "string",
+          "format": "date-time",
+          "description": "最后同步时间（ISO 8601）"
+        }
+      },
+      "additionalProperties": false
+    },
+    "agents": {
+      "type": "object",
+      "description": "Agent 配置，key 为 agent-id",
+      "patternProperties": {
+        "^[a-z][a-z0-9-]{0,62}[a-z0-9]$": {
+          "$ref": "#/definitions/agent"
+        }
+      },
+      "additionalProperties": false
+    },
+    "agent": {
+      "type": "object",
+      "description": "单个 Agent 配置",
+      "required": ["path", "agent-type", "skill-packs", "skills"],
+      "properties": {
+        "path": {
+          "type": "string",
+          "description": "Agent skill 安装路径（绝对路径）"
+        },
+        "agent-type": {
+          "$ref": "#/definitions/agentType"
+        },
+        "skill-packs": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "已挂载的技能包列表"
+        },
+        "skills": {
+          "type": "object",
+          "description": "已挂载的 skill 详情，key 为 skill-name",
+          "patternProperties": {
+            "^[a-z][a-z0-9-]{0,62}[a-z0-9]$": {
+              "$ref": "#/definitions/agentSkill"
+            }
+          },
+          "additionalProperties": false
+        }
+      },
+      "additionalProperties": false
+    },
+    "agentSkill": {
+      "type": "object",
+      "description": "Agent 挂载的 skill 状态",
+      "required": ["status", "version", "adapter", "load-mode"],
+      "properties": {
+        "status": {
+          "$ref": "#/definitions/mountStatus"
+        },
+        "version": {
+          "type": "string",
+          "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$",
+          "description": "语义化版本号"
+        },
+        "adapter": {
+          "type": "string",
+          "description": "使用的 agent 适配器"
+        },
+        "load-mode": {
+          "$ref": "#/definitions/loadMode"
+        },
+        "loaded-at": {
+          "type": "string",
+          "format": "date",
+          "description": "加载日期"
+        },
+        "last-used": {
+          "type": "string",
+          "format": "date",
+          "description": "最后使用日期"
+        }
+      },
+      "additionalProperties": false
+    },
+    "skills": {
+      "type": "object",
+      "description": "Skill 注册表，key 为 skill-name",
+      "patternProperties": {
+        "^[a-z][a-z0-9-]{0,62}[a-z0-9]$": {
+          "$ref": "#/definitions/skill"
+        }
+      },
+      "additionalProperties": false
+    },
+    "skill": {
+      "type": "object",
+      "description": "单个 Skill 注册信息",
+      "required": ["pack", "type", "design-pattern", "skill-type", "version", "quality-status"],
+      "properties": {
+        "pack": {
+          "type": "string",
+          "description": "所属技能包"
+        },
+        "type": {
+          "$ref": "#/definitions/skillType"
+        },
+        "design-pattern": {
+          "$ref": "#/definitions/designPattern"
+        },
+        "skill-type": {
+          "$ref": "#/definitions/skillCategory"
+        },
+        "version": {
+          "type": "string",
+          "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$",
+          "description": "语义化版本号"
+        },
+        "quality-status": {
+          "$ref": "#/definitions/qualityStatus"
+        },
+        "agent-adapters": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "可用的 agent 适配器列表"
+        },
+        "default-adapter": {
+          "type": "string",
+          "description": "默认适配器（通常是 generic）"
+        },
+        "mounted-to": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "已挂载到的 agent-id 列表"
+        }
+      },
+      "additionalProperties": false
+    },
+    "mountStatus": {
+      "type": "string",
+      "enum": ["mounted", "unmounted", "error", "outdated"],
+      "description": "skill 挂载状态"
+    },
+    "qualityStatus": {
+      "type": "string",
+      "enum": ["passed", "failed", "unchecked"],
+      "description": "质量检测状态"
+    },
+    "skillType": {
+      "type": "string",
+      "enum": ["atomic", "workflow"],
+      "description": "skill 类型"
+    },
+    "designPattern": {
+      "type": "string",
+      "enum": ["tool-wrapper", "generator", "reviewer", "inversion", "pipeline"],
+      "description": "设计模式（Google 5 种）"
+    },
+    "skillCategory": {
+      "type": "string",
+      "enum": ["discipline", "technical", "mindset", "reference"],
+      "description": "skill 分类（Writing-Skills 4 种）"
+    },
+    "loadMode": {
+      "type": "string",
+      "enum": ["once", "turn", "session"],
+      "description": "加载生命周期模式"
+    },
+    "agentType": {
+      "type": "string",
+      "enum": ["generic", "claude-code", "hermes", "openclaw"],
+      "description": "Agent 类型"
+    }
+  }
+}
