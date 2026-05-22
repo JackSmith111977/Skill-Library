@@ -38,6 +38,12 @@
       "status": "aligned",
       "role": "调研文档（Claude Code Skill 格式规范）"
     },
+    "research/skill-creator-patterns.md": {
+      "version": "1.0.0",
+      "updated": "2026-05-22",
+      "status": "aligned",
+      "role": "调研文档（skill-creator 元技能模式调研）"
+    },
     "README.md": {
       "version": "1.0.0",
       "updated": "2026-05-22",

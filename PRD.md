@@ -360,3 +360,37 @@ skill-manager init
 | Superpowers 框架 | GitHub obra/superpowers | 🥈 |
 
 详细调研见 `research/skill-classification-and-quality.md`。
+
+---
+
+## 11. Skill 创建元技能
+
+### 11.1 定位
+
+除 `skill-manager` CLI 工具外，还需要 SKILL.md 格式的元技能，专门指导 AI Agent（如 Claude）如何创建符合本项目标准的 skill。
+
+| 元技能 | 职责 | 触发场景 |
+|--------|------|----------|
+| `skill-creator` | 指导 Agent 创建标准化原子 skill | 用户要求"创建一个 skill"时 |
+| `workflow-creator` | 指导 Agent 创建工作流 skill | 用户要求"创建一个工作流 skill"时 |
+
+这两个元技能不是 Python 代码模块，而是标准的 SKILL.md 文档。它们教会 AI Agent 遵循项目格式规范新建 skill。
+
+### 11.2 skill-creator 能力
+
+- 需求澄清：name、pack、design-pattern、skill-type、category
+- 目录脚手架：`skills/<pack>/<name>/` + `references/` `scripts/` `assets/`
+- Frontmatter 编写：name(kebab-case)、description(第三人称+触发短语)、version(semver)、allowed-tools
+- Description 编写：只描述触发条件，不总结工作流程
+- Body 编写：祈使句，1500-2000 词推荐，上限 500 行 / 5000 词
+- References 拆分：详细内容放 references/，SKILL.md 保持精简
+- 自验证：创建后 `skill-manager lint` 确认通过
+
+### 11.3 workflow-creator 能力
+
+- 模式选择：pipeline（线性多步） vs inversion（先采访后执行）
+- Pack 内原子 skill 检查：工作流依赖同包原子 skill
+- Pipeline 模板：声明式步骤列表，序号连续，引用原子 skill
+- Inversion 模板：采访阶段 → STAGE_GATE → 执行阶段，硬性门控
+- 循环依赖检测：步骤间不能循环引用
+- 自验证：创建后 `skill-manager lint` 确认工作流 4 项额外规则通过

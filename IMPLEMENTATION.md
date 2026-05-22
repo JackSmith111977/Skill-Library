@@ -102,6 +102,7 @@ sequenceDiagram
 | E11 | LRU 淘汰策略 | 4 | E8 | P2 |
 | E12 | Description 质量评估 | 4 | E2 | P2 |
 | E13 | 生态完善 | 4 | E9, E10, E11, E12 | P3 |
+| E14 | Skill 创建元技能 | 2 | E6, E13 | P3 |
 
 ### 2.2 依赖关系
 
@@ -124,6 +125,8 @@ graph TD
     E10 --> E13
     E11 --> E13
     E12 --> E13
+    E6 --> E14[E14: Skill 创建元技能]
+    E13 --> E14
 ```
 
 ### 2.3 实现阶段
@@ -149,6 +152,8 @@ gantt
     E12 Description 评估    :e12, after e2, 2d
     section P3 生态完善
     E13 生态完善            :e13, after e9, 5d
+    section P3 元技能完善
+    E14 Skill 创建元技能     :e14, after e13, 2d
 ```
 
 ---
@@ -404,6 +409,58 @@ class ProgressiveLoader:
     def estimate_tokens(self, content: str) -> int:
         """估算 token 数"""
 ```
+
+### 4.6 Skill 创建元技能（E14）
+
+**职责**：指导 AI Agent 创建符合项目标准的新 skill
+
+**两个元技能**：
+
+| 元技能 | 类型 | 设计模式 | 包 | 说明 |
+|--------|------|----------|-----|------|
+| skill-creator | atomic | generator | meta | 创建原子 skill，~300 行 body |
+| workflow-creator | atomic | generator | meta | 创建工作流(pipeline/inversion)，~300 行 body |
+
+**skill-creator 流程**：
+
+```
+需求澄清(name/pack/pattern/category)
+    ↓
+目录脚手架(skills/<pack>/<name>/ + references/scripts/assets/)
+    ↓
+Frontmatter 编写(name/description/version/allowed-tools)
+    ↓
+Description 编写(第三人称 + 引号触发短语)
+    ↓
+Body 编写(祈使句, ≤500 行/5000 词)
+    ↓
+References 拆分(详细内容移出 body)
+    ↓
+自验证(skill-manager lint)
+```
+
+**workflow-creator 流程**：
+
+```
+模式选择(pipeline | inversion)
+    ↓
+同包原子 skill 检查(引用的 skill 必须存在)
+    ↓
+目录脚手架
+    ↓
+步骤编排(序号连续, 引用原子 skill)
+    ↓
+门控标记(Inversion: STAGE_GATE / Pipeline: 步骤检查点)
+    ↓
+循环依赖检测
+    ↓
+自验证(skill-manager lint, 触发工作流 4 项规则)
+```
+
+**设计要点**：
+- 遵循已有 community 模板风格（data-validator / web-researcher / code-reviewer）
+- References 存放详细规范，SKILL.md body 聚焦引导流程
+- 创建完成后自动触发 lint 验证
 
 ---
 

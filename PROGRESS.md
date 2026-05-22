@@ -42,8 +42,9 @@ stateDiagram-v2
 | E11 | LRU 淘汰策略 | 4 | `done` | [EPIC.md](epics/E11-lru-eviction/EPIC.md) |
 | E12 | Description 质量评估 | 4 | `done` | [EPIC.md](epics/E12-description-quality/EPIC.md) |
 | E13 | 生态完善 | 4 | `done` | [EPIC.md](epics/E13-ecosystem/EPIC.md) |
+| E14 | Skill 创建元技能 | 2 | `done` | [EPIC.md](epics/E14-skill-creators/EPIC.md) |
 
-**总计**：13 个 Epic，69 个 Story
+**总计**：14 个 Epic，71 个 Story
 
 ## 文件结构
 
@@ -60,9 +61,13 @@ epics/
 │   ├── EPIC.md
 │   └── S1~S8-*.md
 ├── ...
-└── E13-ecosystem/
+├── E13-ecosystem/
+│   ├── EPIC.md
+│   └── S1~S4-*.md
+└── E14-skill-creators/
     ├── EPIC.md
-    └── S1~S4-*.md
+    ├── S1-skill-creator.md
+    └── S2-workflow-creator.md
 ```
 
 ## 依赖关系
@@ -86,6 +91,8 @@ graph TD
     E10 --> E13
     E11 --> E13
     E12 --> E13
+    E6 --> E14[E14: Skill 创建元技能]
+    E13 --> E14
 ```
 
 ## 进度更新日志
@@ -150,3 +157,7 @@ graph TD
 | 2026-05-22 | E13 | E13-S4 | pending → done | 版本管理命令（version 子命令 + --version） |
 | 2026-05-22 | E13 | - | Epic 完成 | 4 个 Story 全部完成，8 个测试，345 总测试通过 |
 | 2026-05-22 | - | - | **全部 Epic 完成** | **13 个 Epic，69 个 Story，345 个测试全部通过** |
+| 2026-05-22 | E14 | - | pending → in_progress | E14 Epic 创建，开始 E14-S1 skill-creator |
+| 2026-05-22 | E14 | E14-S1 | pending → done | skill-creator SKILL.md + 3 references，lint 98 通过 |
+| 2026-05-22 | E14 | E14-S2 | pending → done | workflow-creator SKILL.md + 2 references，lint 98 通过 |
+| 2026-05-22 | E14 | - | Epic 完成 | 2 个 Story 全部完成，345 测试通过，无回归 |

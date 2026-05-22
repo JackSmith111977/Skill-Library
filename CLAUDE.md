@@ -20,6 +20,37 @@ Agent Skill Library — 跨项目的 skill 管理系统。元 skill 管理其他
 | `CLAUDE.md` | 开发规则（Rules） | 规则变更时 |
 | `docs-alignment.json` | 文档对齐状态 | 版本变更时 |
 
+## 需求新增流程
+
+新增需求必须按以下顺序执行，不可跳步：
+
+```
+Step 1: PRD 更新
+    ↓
+Step 2: 网络调研（确认技术选型与架构）
+    ↓
+Step 3: IMPLEMENTATION.md 更新（架构设计）
+    ↓
+Step 4: 分解为 Epic → 原子 Story
+    ↓
+Step 5: 按 Story 开发实现
+```
+
+**各步骤产出**：
+
+| 步骤 | 产出 | 说明 |
+|------|------|------|
+| Step 1 | `PRD.md` 更新 | 新增需求写入 PRD，明确 What + Why |
+| Step 2 | 调研摘要写入 `research/` | 网络搜索确认最佳实现方案，引用来源 |
+| Step 3 | `IMPLEMENTATION.md` 更新 | 架构设计、模块划分、接口定义 |
+| Step 4 | `epics/<Epic>/` 目录 | EPIC.md + 原子 Story 文件 |
+| Step 5 | 代码 + 测试 | 按 Epic → Story 开发流程实现 |
+
+**调研规则**：
+- 必须使用网络搜索确认技术选型，不自作假设
+- 调研结果写入 `research/<topic>.md`
+- 引用来源需标注可信度（🥇官方/🥈权威/🥉参考）
+
 ## 开发流程
 
 ### Epic / Story 结构
