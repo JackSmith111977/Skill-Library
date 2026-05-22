@@ -1,6 +1,6 @@
 # Skill Library 产品需求文档（PRD）
 
-> 版本：1.6.0 | 更新：2026-05-23
+> 版本：1.7.0 | 更新：2026-05-23
 
 ## 1. 项目概述
 
@@ -221,7 +221,7 @@ skill-name/
 
 ## 5. 管理元技能（skill-manager）
 
-管理功能本身是标准格式的元 skill。**SKILL.md 是主接口**，指导 AI Agent 直接执行文件操作和状态管理。Python 模块是底层工具库，CLI 是选配层。
+管理功能本身是标准格式的元 skill。**SKILL.md 是主接口**，指导 AI Agent 直接执行文件操作和状态管理。Python 模块是底层工具库。
 
 ### 5.1 设计哲学：Skill 即接口
 
@@ -234,10 +234,6 @@ skill-name/
 │  工具库层（Python 模块）                  │
 │  quality/ state/ registry/ loader        │
 │  被 SKILL.md 通过 Bash 调用              │
-├──────────────────────────────────────────┤
-│  CLI 层（选配）                           │
-│  skill-manager（Click）                  │
-│  薄封装，非必需运行时                      │
 └──────────────────────────────────────────┘
 ```
 
@@ -245,7 +241,6 @@ skill-name/
 - 所有管理操作通过 skill-manager 的 SKILL.md 指导 AI 完成
 - Mount/unmount 本质是文件目录操作（cp/rm），AI 直接执行
 - Lint/register 等操作通过 Bash 调用 Python 工具模块
-- CLI 是可选便捷层，不是系统必需的运行时
 
 ### 5.2 管理操作
 
@@ -261,20 +256,6 @@ skill-name/
 | status | 读 state.json | 无（只读） | 无 |
 
 **异常处理**：操作失败时写入 `error` 状态 + 错误原因，不中断后续操作。
-
-### 5.3 CLI 选配层（附录）
-
-管理功能同时提供 Click CLI 工具作为选配。可通过 `pip install -e .` 安装：
-
-```
-skill-manager init          # 初始化
-skill-manager lint <path>   # 质量检测
-skill-manager mount <name>  # 挂载 skill
-skill-manager unmount <name>  # 卸载 skill
-skill-manager register <dir>  # 注册 skill
-```
-
-CLI 是 skill 层的薄封装，两者底层复用同一套 Python 模块（quality/state/registry）。CLI 非必需——直接通过 skill-manager SKILL.md 操作效果相同。
 
 ---
 

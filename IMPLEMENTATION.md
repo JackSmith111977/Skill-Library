@@ -1,6 +1,6 @@
 # Skill Library 实现技术文档
 
-> 版本：1.5.0 | 更新：2026-05-23 | 对齐：PRD v1.5.0
+> 版本：1.6.0 | 更新：2026-05-23 | 对齐：PRD v1.7.0
 
 ## 0. 文档索引
 
@@ -168,7 +168,6 @@ gantt
 | **数据格式** | JSON | state.json/config.json，易读易解析 |
 | **文档格式** | Markdown + YAML | SKILL.md 标准格式 |
 | **版本控制** | Git | skill 版本管理、变更追踪 |
-| **CLI 框架** | Click / Typer | 命令行工具开发 |
 | **测试框架** | pytest | 单元测试、集成测试 |
 
 ### 3.2 依赖清单
@@ -176,8 +175,6 @@ gantt
 ```python
 # requirements.txt
 pyyaml>=6.0          # YAML 解析
-click>=8.0           # CLI 框架
-rich>=13.0           # 终端美化输出
 jsonschema>=4.0      # JSON 校验
 gitpython>=3.0       # Git 操作
 ```
@@ -289,13 +286,6 @@ class SkillRegistry:
 ```
 
 **注册流程**（skill-based）：`skill-manager SKILL.md` 指导 AI 调用 `scan_skills()` → `parse_skill_md()` → `state["skills"][name] = {...}` → 原子写入 state.json。
-
-**CLI 选配**（效果等同）：
-```bash
-skill-manager register <skills_dir>          # 注册目录下所有 skill
-skill-manager register <skills_dir> --dry-run # 预览不写入
-skill-manager register <skills_dir> --pack development  # 指定 pack
-```
 
 ### 4.3 质量检测引擎
 
@@ -462,8 +452,7 @@ Body 编写(祈使句, ≤500 行/5000 词)
     ↓
 References 拆分(详细内容移出 body)
     ↓
-自验证(skill-manager lint)
-```
+自验证(python -m skill_library.quality.lint)
 
 **workflow-creator 流程**：
 
@@ -480,7 +469,7 @@ References 拆分(详细内容移出 body)
     ↓
 循环依赖检测
     ↓
-自验证(skill-manager lint, 触发工作流 4 项规则)
+自验证(python -m skill_library.quality.lint, 触发工作流 4 项规则)
 ```
 
 **设计要点**：
@@ -514,12 +503,6 @@ Skill Library/
 │   └── E13-ecosystem/
 ├── src/skill_library/          # 源码（setuptools 从 src/ 发现包）
 │   ├── __init__.py
-│   ├── cli/                    # CLI 命令（选配层）
-│   │   ├── main.py             # 入口：create/lint/load/version
-│   │   ├── create_cmd.py
-│   │   ├── lint_cmd.py
-│   │   ├── load_cmd.py
-│   │   └── version_cmd.py
 │   ├── state/                  # 状态机引擎
 │   │   ├── machine.py          # 状态机（含 agent 注册/隔离）
 │   │   ├── manager.py          # 状态管理
@@ -569,8 +552,7 @@ Skill Library/
 ├── research/                   # 调研文档
 │   ├── claude-code-skill-format.md
 │   └── skill-classification-and-quality.md
-└── tests/                      # 测试（按模块分包）
-    ├── test_cli/
+└── tests/                      # 测试
     ├── test_state/             # 含 agent 注册/查询/配置验证
     ├── test_quality/           # 含 bloat + description_quality
     ├── test_registry/
@@ -586,7 +568,6 @@ Skill Library/
 | `pyproject.toml` | 包构建配置（setuptools + entry_points） | TOML |
 | `config.json` | 技能库配置（路径、agent 信息） | JSON |
 | `state.json` | 状态机（single source of truth） | JSON |
-| `src/skill_library/cli/main.py` | CLI 入口（选配层，Click group） | Python |
 | `src/skill_library/quality/lint.py` | lint 入口（11 项规则 + 膨胀检测） | Python |
 | `src/skill_library/loader/eviction.py` | LRU 淘汰器 | Python |
 
@@ -723,11 +704,7 @@ pip install -r requirements.txt
 
 ### 8.2 使用方式
 
-系统提供两种等价的接口，**推荐使用 skill-based 方式**：
-
-#### 方式一：Skill-based（推荐）
-
-AI Agent 通过加载 skill-manager/ skill-creator/ workflow-creator 的 SKILL.md 执行管理操作。这是系统的原生接口，无需 CLI 安装。
+AI Agent 通过加载 skill-manager/ skill-creator/ workflow-creator 的 SKILL.md 执行管理操作。这是系统的原生接口。
 
 ```
 # 在 Claude Code 中触发：
@@ -743,24 +720,6 @@ AI Agent 通过加载 skill-manager/ skill-creator/ workflow-creator 的 SKILL.m
 
 "检查 skill 质量"
   → skill-manager 指导 AI：Bash 调用 Python 质量引擎
-```
-
-#### 方式二：CLI 选配（效果等同）
-
-```bash
-# 安装 CLI（可选）
-pip install -e .
-
-# 初始化
-skill-manager init
-# 质量检测
-skill-manager lint my-skill
-# 挂载/卸载
-skill-manager mount my-skill --agent claude-code
-skill-manager unmount my-skill
-
-# 分类
-skill-manager classify my-skill --pack development --pattern tool-wrapper
 ```
 
 ---

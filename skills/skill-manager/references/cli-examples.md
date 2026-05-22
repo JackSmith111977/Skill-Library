@@ -1,6 +1,6 @@
 # 管理操作示例
 
-Skill-based 操作指南。所有操作通过 AI Agent 直接执行，不依赖 CLI。
+Skill-based 操作指南。所有操作通过 AI Agent 直接执行。
 
 ## 完整工作流
 
@@ -138,16 +138,3 @@ sm.save(state)
 "
 ```
 
-## 附录：CLI 等效命令
-
-CLI 工具 `skill-manager` 提供相同功能（需 `pip install -e .`）：
-
-```bash
-skill-manager lint skills/dev/data-validator
-skill-manager register skills/dev/data-validator
-skill-manager mount data-validator
-skill-manager unmount data-validator
-skill-manager list
-```
-
-效果与 skill-based 方式一致，CLI 为选配。

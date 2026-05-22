@@ -1,6 +1,6 @@
 # CLAUDE.md
 
-> 版本：1.6.1 | 更新：2026-05-23
+> 版本：1.6.2 | 更新：2026-05-23
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
@@ -111,6 +111,8 @@ pending → in_progress → testing → done
     ↓
 对齐文档（docs-alignment.json）
     ↓
+提交前自检（见 § 提交前检查清单）
+    ↓
 提交代码
 ```
 
@@ -128,6 +130,21 @@ pending → in_progress → testing → done
 - 每个 Story 状态变更时，更新对应 Story 文件和 `PROGRESS.md`
 - 测试门禁写在各 Epic 的 EPIC.md 中，作为验收条件
 - 阻塞问题记录在进度日志中
+
+### 提交前检查清单
+
+每次提交前必须执行以下检查，全部通过后方可提交：
+
+```
+□ 测试通过：python -m pytest tests/ -q
+□ 文档对齐：docs-alignment.json 版本号与 PRD/README/IMPLEMENTATION 实际版本一致
+□ 日期同步：docs-alignment.json 中所有文档 updated 日期 >= last-alignment
+□ 文档变更同步：改了什么文档，就在 docs-alignment.json 中同步更新其版本信息
+□ Skill lint：改动了 skill 文件时运行 lint（python -m skill_library.quality.lint）
+□ git status 确认：只包含预期文件，无遗漏
+```
+
+**核心原则**：`docs-alignment.json` 是提交门禁。任何文档变更必须同步更新其中的版本字段。如果提交前发现版本不同步，必须先对齐再提交。
 
 ## Skill 格式规范
 
@@ -230,6 +247,6 @@ Skill Library/
 - 分类：项目自有 skill 声明 pack + type + design-pattern + skill-type（可选 metadata）
 - Agent 适配：通用 SKILL.md 必须存在，agent 版本可选，降级到通用版本
 - 状态机驱动：所有管理操作必须读状态 → 前置检查 → 执行 → 写状态
-- 元 skill 自管理：管理功能本身也是标准 skill（CLI 为选配层，非必需运行时）
+- 元 skill 自管理：管理功能本身也是标准 skill，通过文件操作和 Bash 调用 Python 模块实现
 - **Profile 选择**：项目自有 skill 用 `skill-library`；第三方/社区 skill 用相应 profile
 - 格式对齐 [agentskills.io](https://agentskills.io/specification) 开放标准

@@ -13,7 +13,7 @@ argument-hint:
 
 # Skill Manager
 
-Manages the Skill Library: lint, register, mount, unmount, and query skills. This meta-skill guides the AI to perform management operations directly via file operations and Python module calls. CLI is optional.
+Manages the Skill Library: lint, register, mount, unmount, and query skills. This meta-skill guides the AI to perform management operations directly via file operations and Python module calls.
 
 ## Prerequisites
 
@@ -215,15 +215,3 @@ sm.save(state)
 "
 ```
 
-## Appendix: CLI (Optional)
-
-The system also provides a Click CLI as thin wrapper. Install with `pip install -e .`:
-
-```bash
-skill-manager lint <path>       # quality check
-skill-manager register <dir>    # register skills
-skill-manager mount <name>      # mount (requires CLI runtime)
-skill-manager unmount <name>    # unmount
-```
-
-CLI effects are identical to skill-based operations. Not required — prefer skill-based workflow.

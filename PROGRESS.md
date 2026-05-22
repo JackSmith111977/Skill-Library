@@ -45,8 +45,9 @@ stateDiagram-v2
 | E14 | Skill 创建元技能 | 2 | `done` | [EPIC.md](epics/E14-skill-creators/EPIC.md) |
 | E15 | skill-manager 元 Skill 重写 | 5 | `done` | [EPIC.md](epics/E15-skill-manager-rewrite/EPIC.md) |
 | E16 | 用户文档体系完善 | 3 | `done` | [EPIC.md](epics/E16-readme-rewrite/EPIC.md) |
+| E17 | CLI 层完全移除 | 5 | `done` | [EPIC.md](epics/E17-cli-removal/EPIC.md) |
 
-**总计**：16 个 Epic，79 个 Story
+**总计**：17 个 Epic，84 个 Story
 
 ## 文件结构
 
@@ -175,3 +176,10 @@ graph TD
 | 2026-05-23 | E16 | E16-S2 | `pending` → `done` | README 全文重写完成，CLI-centric → Skill-first，v1.0.0→v1.1.0 |
 | 2026-05-23 | E16 | E16-S3 | `pending` → `done` | docs-alignment.json 同步，验证通过 |
 | 2026-05-23 | E16 | - | Epic 完成 | 3 个 Story 全部完成，文档类改动，无代码变更 |
+| 2026-05-23 | E17 | - | `pending` → `in_progress` | Epic 创建，开始 E17-S1 CLI 删除 |
+| 2026-05-23 | E17 | E17-S1 | `pending` → `done` | 删除 cli/(7 文件) + test_cli/(3 文件) + test_create_cli.py |
+| 2026-05-23 | E17 | E17-S2 | `pending` → `done` | pyproject.toml + requirements.txt 移除 click/rich |
+| 2026-05-23 | E17 | E17-S3 | `pending` → `done` | PRD/IMPLEMENTATION/CLAUDE 清除 CLI 引用 |
+| 2026-05-23 | E17 | E17-S4 | `pending` → `done` | README + skill-manager SKILL.md + cli-examples.md 清除 CLI |
+| 2026-05-23 | E17 | E17-S5 | `pending` → `done` | 最终验证通过，333 测试，无回归 |
+| 2026-05-23 | E17 | - | Epic 完成 | 5 个 Story 全部完成，项目版本 2.0.0，纯 Skill 架构 |
