@@ -32,7 +32,7 @@ stateDiagram-v2
 | E1 | 数据基础层 | 5 | `done` | [EPIC.md](epics/E1-data-foundation/EPIC.md) |
 | E2 | 质量检测引擎 | 8 | `done` | [EPIC.md](epics/E2-quality-engine/EPIC.md) |
 | E3 | Skill Registry | 6 | `done` | [EPIC.md](epics/E3-skill-registry/EPIC.md) |
-| E4 | 状态机引擎 | 8 | `pending` | [EPIC.md](epics/E4-state-machine/EPIC.md) |
+| E4 | 状态机引擎 | 8 | `done` | [EPIC.md](epics/E4-state-machine/EPIC.md) |
 | E5 | 工作流 Skill 支持 | 5 | `pending` | [EPIC.md](epics/E5-workflow-support/EPIC.md) |
 | E6 | Skill 模板系统 | 4 | `pending` | [EPIC.md](epics/E6-template-system/EPIC.md) |
 | E7 | Agent 适配框架 | 7 | `pending` | [EPIC.md](epics/E7-agent-adapter/EPIC.md) |
@@ -109,3 +109,5 @@ graph TD
 | 2026-05-22 | E2 | - | Epic 完成 | 8 个 Story 全部完成，50 个测试通过 |
 | 2026-05-22 | E3 | E3-S1~S6 | pending → done | Skill Registry 完成，33 个测试通过 |
 | 2026-05-22 | E3 | - | Epic 完成 | 6 个 Story 全部完成，33 个测试通过 |
+| 2026-05-22 | E4 | E4-S1~S8 | pending → done | 状态机引擎完成，31 个测试通过 |
+| 2026-05-22 | E4 | - | Epic 完成 | 8 个 Story 全部完成，31 个测试通过 |

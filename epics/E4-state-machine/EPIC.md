@@ -10,20 +10,20 @@
 | 优先级 | P0 |
 | Story 数 | 8 |
 | 依赖 | E1, E3 |
-| 状态 | `pending` |
+| 状态 | `done` |
 
 ## Story 列表
 
 | ID | Story | 状态 | 依赖 |
 |----|-------|------|------|
-| E4-S1 | 状态机引擎核心 | `pending` | E1-S3 |
-| E4-S2 | 前置检查器 | `pending` | E1-S5 |
-| E4-S3 | mount 操作 | `pending` | E4-S1, E4-S2 |
-| E4-S4 | unmount 操作 | `pending` | E4-S1 |
-| E4-S5 | classify 操作 | `pending` | E4-S1 |
-| E4-S6 | status 查询 | `pending` | E1-S3 |
-| E4-S7 | init 初始化 | `pending` | E1-S3, E1-S4 |
-| E4-S8 | 异常处理 | `pending` | E4-S1 |
+| E4-S1 | 状态机引擎核心 | `done` | E1-S3 |
+| E4-S2 | 前置检查器 | `done` | E1-S5 |
+| E4-S3 | mount 操作 | `done` | E4-S1, E4-S2 |
+| E4-S4 | unmount 操作 | `done` | E4-S1 |
+| E4-S5 | classify 操作 | `done` | E4-S1 |
+| E4-S6 | status 查询 | `done` | E1-S3 |
+| E4-S7 | init 初始化 | `done` | E1-S3, E1-S4 |
+| E4-S8 | 异常处理 | `done` | E4-S1 |
 
 ## 测试门禁
 
