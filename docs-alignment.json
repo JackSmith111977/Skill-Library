@@ -1,0 +1,30 @@
+{
+  "project-version": "1.0.0",
+  "last-alignment": "2026-05-22",
+  "documents": {
+    "CLAUDE.md": {
+      "version": "1.0.0",
+      "updated": "2026-05-22",
+      "status": "aligned",
+      "role": "开发规则（精简版）"
+    },
+    "PRD.md": {
+      "version": "1.0.0",
+      "updated": "2026-05-22",
+      "status": "aligned",
+      "role": "产品需求文档（完整版）"
+    },
+    "research/skill-classification-and-quality.md": {
+      "version": "1.0.0",
+      "updated": "2026-05-22",
+      "status": "aligned",
+      "role": "调研文档（分类体系+质量标准）"
+    }
+  },
+  "alignment-rules": {
+    "version-sync": "所有文档版本号必须与 project-version 一致",
+    "date-sync": "所有文档 updated 日期必须 >= last-alignment",
+    "cross-reference": "文档间引用必须指向存在的文件",
+    "content-consistency": "同一概念在不同文档中的描述必须一致"
+  }
+}
