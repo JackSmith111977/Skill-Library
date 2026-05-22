@@ -20,6 +20,9 @@ dev = [
     "pytest>=7.0",
 ]
 
+[project.scripts]
+skill-manager = "skill_library.cli.main:cli"
+
 [tool.setuptools.packages.find]
 where = ["src"]
 

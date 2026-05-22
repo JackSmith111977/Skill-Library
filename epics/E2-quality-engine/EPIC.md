@@ -10,20 +10,20 @@
 | 优先级 | P0 |
 | Story 数 | 8 |
 | 依赖 | E1 |
-| 状态 | `pending` |
+| 状态 | `done` |
 
 ## Story 列表
 
 | ID | Story | 状态 | 依赖 |
 |----|-------|------|------|
-| E2-S1 | name 格式校验规则 | `pending` | - |
-| E2-S2 | description 校验规则 | `pending` | - |
-| E2-S3 | body 长度校验规则 | `pending` | - |
-| E2-S4 | 文件引用有效性校验 | `pending` | - |
-| E2-S5 | allowed-tools 格式校验 | `pending` | - |
-| E2-S6 | metadata 格式校验 | `pending` | - |
-| E2-S7 | lint 结果聚合器 | `pending` | E2-S1~S6 |
-| E2-S8 | lint CLI 命令 | `pending` | E2-S7 |
+| E2-S1 | name 格式校验规则 | `done` | - |
+| E2-S2 | description 校验规则 | `done` | - |
+| E2-S3 | body 长度校验规则 | `done` | - |
+| E2-S4 | 文件引用有效性校验 | `done` | - |
+| E2-S5 | allowed-tools 格式校验 | `done` | - |
+| E2-S6 | metadata 格式校验 | `done` | - |
+| E2-S7 | lint 结果聚合器 | `done` | E2-S1~S6 |
+| E2-S8 | lint CLI 命令 | `done` | E2-S7 |
 
 ## 测试门禁
 
