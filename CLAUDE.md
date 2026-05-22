@@ -131,19 +131,18 @@ pending → in_progress → testing → done
 
 ## Skill 格式规范
 
-每个 skill 是一个目录，必须包含 `SKILL.md`。分两类：原子 skill（单一任务）和工作流 skill（编排多个原子 skill）。
+项目对齐 [Agent Skills 开放标准](https://agentskills.io/specification)（Anthropic 2025-12 发布，33+ 平台采纳）。每个 skill 是一个目录，必须包含 `SKILL.md`。
 
 ```
 skill-name/
-├── SKILL.md                    # 必需：通用版本（YAML frontmatter + Markdown body）
+├── SKILL.md                    # 必需：YAML frontmatter + Markdown body
 ├── agents/                     # 可选：Agent 适配版本
 │   ├── claude-code/SKILL.md    # Claude Code 版
-│   ├── hermes/SKILL.md         # Hermes 版
 │   └── ...
-├── references/                 # 可选：按需加载的参考文档（共享）
-├── scripts/                    # 可选：可执行脚本（共享）
+├── references/                 # 可选：按需加载的参考文档
+├── scripts/                    # 可选：可执行脚本
 ├── temp/                       # 可选：过程文件
-└── assets/                     # 可选：模板、资源文件（共享）
+└── assets/                     # 可选：模板、资源文件
 ```
 
 **Agent 适配规则**：
@@ -152,22 +151,33 @@ skill-name/
 - 安装时优先使用匹配的 agent 版本，无匹配则降级到通用版本
 - 共享资源（references/scripts/assets）对所有 agent 版本通用
 
-### Frontmatter
+### Frontmatter（开放标准）
 
 ```yaml
 ---
 name: skill-name              # 必需，kebab-case，1-64 字符
 description: >                # 必需，触发条件，1-1024 字符
   This skill should be used when the user asks to "xxx", "yyy".
-version: 0.1.0                # 可选
-allowed-tools: [Read, Bash]   # 可选
+version: 0.1.0                # 可选，semver
+license: MIT                  # 可选
+compatibility: Python 3.11+   # 可选，环境要求
+allowed-tools: [Read, Bash]   # 可选，实验性
+metadata:                     # 可选，自定义扩展
+  pack: development           # 项目扩展：技能包
+  design-pattern: generator   # 项目扩展：设计模式
+  skill-type: technical       # 项目扩展：技能类型
+  author: Kei                 # 任意自定义字段
 ---
 ```
 
-### Description 写法
+### Description 写法（按 profile）
 
-- 第三人称："This skill should be used when..."
-- 含具体触发短语（引号内），宁可偏激进
+| Profile | 要求 |
+|---------|------|
+| `skill-library`（默认） | 第三人称 + 引号触发短语："This skill should be used when..." |
+| `generic` | 可理解、非空即可 |
+| `claude-code` | 允许使用 `triggers` 字段替代 description 内嵌触发短语 |
+
 - **只描述触发条件，不要总结工作流程**
 
 ### Body 写法
@@ -217,7 +227,9 @@ Skill Library/
 - Skill 命名：kebab-case，动词或名词短语
 - 版本管理：语义化版本（MAJOR.MINOR.PATCH）
 - 质量检测：每个 skill 提交前运行 lint（原子 7 项 + 工作流 4 项）
-- 分类：每个 skill 必须声明 pack + type + design-pattern + skill-type
+- 分类：项目自有 skill 声明 pack + type + design-pattern + skill-type（可选 metadata）
 - Agent 适配：通用 SKILL.md 必须存在，agent 版本可选，降级到通用版本
 - 状态机驱动：所有管理操作必须读状态 → 前置检查 → 执行 → 写状态
 - 元 skill 自管理：管理功能本身也是标准 skill
+- **Profile 选择**：项目自有 skill 用 `skill-library`；第三方/社区 skill 用相应 profile
+- 格式对齐 [agentskills.io](https://agentskills.io/specification) 开放标准

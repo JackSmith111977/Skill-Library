@@ -6,7 +6,7 @@ from ..models import LintWarning
 SEMVER_PATTERN = re.compile(r"^\d+\.\d+\.\d+$")
 
 
-def check_metadata(metadata: dict | None) -> list[LintWarning]:
+def check_metadata(metadata: dict | None, profile: str = "skill-library") -> list[LintWarning]:
     """校验 metadata 格式"""
     warnings = []
 
@@ -14,11 +14,14 @@ def check_metadata(metadata: dict | None) -> list[LintWarning]:
         return warnings
 
     if not isinstance(metadata, dict):
-        # 这个应该是 ERROR，但按 PRD 规定 metadata 格式是 WARNING
         warnings.append(LintWarning(
             rule="metadata",
             message="metadata 应为键值对映射",
         ))
+        return warnings
+
+    # 非 skill-library profile 跳过 metadata 字段检查
+    if profile != "skill-library":
         return warnings
 
     # 检查 version 格式

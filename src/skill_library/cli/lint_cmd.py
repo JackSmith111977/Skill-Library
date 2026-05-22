@@ -15,10 +15,13 @@ console = Console()
 @click.command()
 @click.argument("skill_path", type=click.Path(exists=True, file_okay=False))
 @click.option("--json", "output_json", is_flag=True, help="输出 JSON 格式")
-def lint(skill_path: str, output_json: bool):
+@click.option("--profile", default="skill-library",
+              type=click.Choice(["generic", "skill-library", "claude-code"]),
+              help="检测 profile（默认 skill-library）")
+def lint(skill_path: str, output_json: bool, profile: str):
     """检测 skill 质量"""
     engine = QualityEngine()
-    result = engine.lint_atomic(Path(skill_path))
+    result = engine.lint_atomic(Path(skill_path), profile=profile)
 
     if output_json:
         import json

@@ -11,13 +11,16 @@ MAX_REFERENCE_FILES = 10
 
 def check_bloat(skill_path: Path) -> list[LintWarning]:
     """检测 skill 是否违反最佳实践限制。"""
+    from ...registry.parser import _split_frontmatter
+
     warnings = []
 
     skill_md = skill_path / "SKILL.md"
     if not skill_md.exists():
         return warnings
 
-    body = _extract_body(skill_md)
+    content = skill_md.read_text(encoding="utf-8")
+    _, body = _split_frontmatter(content)
     lines = body.split("\n")
     words = body.split()
 
@@ -44,13 +47,3 @@ def check_bloat(skill_path: Path) -> list[LintWarning]:
             ))
 
     return warnings
-
-
-def _extract_body(skill_md: Path) -> str:
-    """从 SKILL.md 提取 body（去掉 frontmatter）。"""
-    content = skill_md.read_text(encoding="utf-8")
-    if content.startswith("---"):
-        end = content.find("---", 3)
-        if end != -1:
-            return content[end + 3:].strip()
-    return content.strip()

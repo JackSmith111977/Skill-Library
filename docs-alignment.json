@@ -1,24 +1,24 @@
 {
-  "project-version": "1.6.0",
+  "project-version": "1.7.0",
   "last-alignment": "2026-05-22",
   "documents": {
     "CLAUDE.md": {
-      "version": "1.5.0",
+      "version": "1.6.0",
       "updated": "2026-05-22",
       "status": "aligned",
-      "role": "开发规则（含需求新增流程 + 强制开发原则 + 状态更新流程）"
+      "role": "开发规则（对齐开放标准 + Profile 机制 + 格式规范更新）"
     },
     "PRD.md": {
-      "version": "1.3.0",
+      "version": "1.4.0",
       "updated": "2026-05-22",
       "status": "aligned",
-      "role": "产品需求文档（含 §11 Skill 创建元技能）"
+      "role": "产品需求文档（对齐开放标准 + Profile 驱动质量检测）"
     },
     "IMPLEMENTATION.md": {
-      "version": "1.3.0",
+      "version": "1.4.0",
       "updated": "2026-05-22",
       "status": "aligned",
-      "role": "实现技术文档（含 E14 Skill 创建元技能）"
+      "role": "实现技术文档（Profile 机制 + register 命令设计）"
     },
     "PROGRESS.md": {
       "version": "1.2.0",

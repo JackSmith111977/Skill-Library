@@ -16,10 +16,12 @@ def _register_commands():
     from .create_cmd import create
     from .load_cmd import load
     from .version_cmd import version
+    from .register_cmd import register
     cli.add_command(lint)
     cli.add_command(create)
     cli.add_command(load)
     cli.add_command(version)
+    cli.add_command(register)
 
 
 _register_commands()

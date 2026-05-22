@@ -272,11 +272,11 @@ class StateMachine:
 
 ```python
 class SkillRegistry:
-    def scan(self, skills_dir: str) -> dict:
-        """扫描 skills/ 目录，建立索引"""
+    def scan(self, skills_dir: str) -> list[Path]:
+        """扫描目录，返回含 SKILL.md 的子目录列表"""
 
     def register(self, skill_path: str) -> dict:
-        """注册新 skill"""
+        """注册新 skill（parse + 写入 state.json）"""
 
     def unregister(self, skill_name: str) -> None:
         """注销 skill"""
@@ -288,9 +288,36 @@ class SkillRegistry:
         """获取 skill 路径（含 agent 适配降级）"""
 ```
 
+**CLI 注册命令**：
+
+```bash
+skill-manager register <skills_dir>          # 注册目录下所有 skill
+skill-manager register <skills_dir> --dry-run # 预览不写入
+skill-manager register <skills_dir> --pack development  # 指定 pack
+```
+
+注册流程：`scan_skills()` → `parse_skill_md()` → `state["skills"][name] = {...}` → 原子写入 state.json。
+
 ### 4.3 质量检测引擎
 
-**职责**：执行 lint 规则，输出检测报告
+**职责**：执行 lint 规则，输出检测报告。对齐 [Agent Skills 开放标准](https://agentskills.io/specification)，通过 profile 机制适配不同 skill 格式。
+
+**Profile 机制**：`lint_atomic(skill_path, profile='skill-library')` 按 profile 切换规则集：
+
+| 规则 | generic | skill-library（默认） | claude-code |
+|------|---------|---------------------|-------------|
+| name 格式 | ERROR | ERROR | ERROR |
+| description 非空 | ERROR | ERROR | ERROR |
+| description 触发短语 | 关键词即可 | 引号内触发短语 | 检查 triggers 数组 |
+| 第三人称 | 跳过 | WARNING | 跳过 |
+| allowed-tools | 跳过 | WARNING | 跳过 |
+| metadata flat | 跳过 | WARNING | 跳过 |
+| pack/design-pattern/skill-type | 跳过 | WARNING | 跳过 |
+| body 长度 | WARNING | WARNING | WARNING |
+| references 有效性 | ERROR | ERROR | ERROR |
+| 膨胀检测 | WARNING | WARNING | WARNING |
+
+**解析器**：统一使用 `yaml.safe_load`（registry.parser）解析 frontmatter，支持完整 YAML 语法（嵌套、缩进多行、数组对象）。
 
 **原子 skill 7 项规则**：
 
@@ -298,11 +325,11 @@ class SkillRegistry:
 |---|------|------|------|
 | 1 | name 格式 | 正则 `^[a-z][a-z0-9-]{0,62}[a-z0-9]$` + 目录名一致性 | ERROR |
 | 2 | description 长度 | `1 <= len(desc) <= 1024` | ERROR |
-| 3 | description 触发词 | 检测引号内短语 + 第三人称 | WARNING |
+| 3 | description 触发词 | 按 profile：引号内短语 / triggers 字段 / 关键词 | WARNING |
 | 4 | body 长度 | `len(lines) <= 500` | WARNING |
 | 5 | 文件引用有效性 | 扫描 `[text](path)` + 检查文件存在 | ERROR |
-| 6 | allowed-tools 格式 | 空格分隔的工具名列表 | ERROR |
-| 7 | metadata 格式 | 键值对映射 + version 语义化 | WARNING |
+| 6 | allowed-tools 格式 | profile=skill-library 时警告 | WARNING |
+| 7 | metadata 格式 | profile=skill-library 时检查 flat | WARNING |
 
 **工作流 skill 额外 4 项规则**：
 

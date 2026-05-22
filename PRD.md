@@ -6,14 +6,14 @@
 
 ### 1.1 定位
 
-Agent Skill Library — 跨项目的 skill 管理系统。管理系统本身以元 skill 形式实现（标准 skill 格式），管理其他 skill 的全生命周期：创建、分类、版本控制、安装/卸载、质量检测。
+Agent Skill Library — 跨项目的 skill 管理平台。对齐 [Agent Skills 开放标准](https://agentskills.io/specification)（Anthropic 2025-12 发布，33+ Agent 平台采纳）。管理系统本身以元 skill 形式实现（标准 skill 格式），管理其他 skill 的全生命周期：创建、注册、分类、版本控制、安装/卸载、质量检测。通过 profile 机制支持多种 skill 格式（Generic 开放标准 / Skill Library 扩展 / Claude Code 扩展）。
 
 ### 1.2 核心价值
 
 - Agent 按用途挂载对应技能包，不加载无关 skill
 - 原子 skill 单一职责，工作流 skill 编排复杂任务
 - 状态机驱动，每次操作可追溯
-- 自动化质量检测，保障 skill 可靠性
+- Profile 驱动的质量检测，兼容多平台 skill 格式
 
 ---
 
@@ -286,6 +286,21 @@ skill-manager init
 - 详细内容拆分到 references/
 - 迭代改进时审查是否引入冗余
 - 定期 lint 检查 body 大小
+
+### 6.5 Profile 驱动的质量检测
+
+质量引擎通过 profile 机制适配不同 skill 格式，避免格式差异导致的误报。
+
+| Profile | 适用场景 | 规则特点 |
+|---------|----------|----------|
+| `generic` | 开放标准（agentskills.io） | 仅校验 name/description/body 通用质量 |
+| `skill-library`（默认） | 项目自有 skill | 含分类字段、触发短语、第三人称等扩展检查 |
+| `claude-code` | Claude Code 技能 | 识别 triggers/aliases/commands 等扩展字段 |
+
+**Profile 选择规则**：
+- 不指定时默认 `skill-library`（向后兼容）
+- 对自有 skill 保持 `skill-library`，确保分类完整性
+- 对第三方/社区 skill 使用 `generic` 或对应平台 profile
 
 ---
 
