@@ -1,6 +1,6 @@
 # CLAUDE.md
 
-> 版本：1.3.0 | 更新：2026-05-22
+> 版本：1.4.0 | 更新：2026-05-22
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
@@ -14,7 +14,9 @@ Agent Skill Library — 跨项目的 skill 管理系统。元 skill 管理其他
 |------|------|----------|
 | `PRD.md` | 产品需求（What + Why） | 需求变更时 |
 | `IMPLEMENTATION.md` | 实现技术（How） | 架构/模块设计变更时 |
-| `PROGRESS.md` | 开发进度（Status） | 每个 Story 状态变更时 |
+| `PROGRESS.md` | 开发进度索引（Status） | Story 状态变更时 |
+| `epics/<Epic>/EPIC.md` | Epic 概述 | Epic 变更时 |
+| `epics/<Epic>/S*-*.md` | Story 详情 | Story 变更时 |
 | `CLAUDE.md` | 开发规则（Rules） | 规则变更时 |
 | `docs-alignment.json` | 文档对齐状态 | 版本变更时 |
 
@@ -41,10 +43,59 @@ pending → in_progress → testing → done
 - `in_progress → blocked`：依赖未满足或有问题
 - `blocked → pending`：问题解决，重新排队
 
+### 开发原则（强制）
+
+**每次开发必须遵循以下流程**：
+
+#### 1. 开始前
+
+```
+读取 Story 文件（epics/<Epic>/S*-*.md）
+    ↓
+理解需求和验收标准
+    ↓
+更新 Story 状态：pending → in_progress
+    ↓
+更新 PROGRESS.md 进度日志
+```
+
+#### 2. 开发中
+
+```
+按 Story 验收标准实现
+    ↓
+编写测试用例
+    ↓
+执行测试门禁（Epic EPIC.md 中定义）
+```
+
+#### 3. 开发后
+
+```
+测试通过
+    ↓
+更新 Story 状态：in_progress → testing → done
+    ↓
+更新 PROGRESS.md 进度日志
+    ↓
+对齐文档（docs-alignment.json）
+    ↓
+提交代码
+```
+
+#### 4. 状态更新位置
+
+| 文件 | 更新内容 |
+|------|----------|
+| `epics/<Epic>/S*-*.md` | Story 状态字段 |
+| `epics/<Epic>/EPIC.md` | Epic 状态（所有 Story 完成后） |
+| `PROGRESS.md` | 进度日志 |
+| `docs-alignment.json` | 文档版本对齐 |
+
 ### 进度跟踪
 
-- 每个 Story 状态变更时，更新 `PROGRESS.md`
-- 测试门禁写在各 Epic 下方，作为验收条件
+- 每个 Story 状态变更时，更新对应 Story 文件和 `PROGRESS.md`
+- 测试门禁写在各 Epic 的 EPIC.md 中，作为验收条件
 - 阻塞问题记录在进度日志中
 
 ## Skill 格式规范

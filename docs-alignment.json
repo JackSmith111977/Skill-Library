@@ -1,12 +1,12 @@
 {
-  "project-version": "1.3.0",
+  "project-version": "1.4.0",
   "last-alignment": "2026-05-22",
   "documents": {
     "CLAUDE.md": {
-      "version": "1.3.0",
+      "version": "1.4.0",
       "updated": "2026-05-22",
       "status": "aligned",
-      "role": "开发规则（含 Epic/Story 流程 + epics/ 目录）"
+      "role": "开发规则（含强制开发原则 + 状态更新流程）"
     },
     "PRD.md": {
       "version": "1.2.0",
