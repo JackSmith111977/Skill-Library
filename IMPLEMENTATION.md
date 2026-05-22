@@ -1,6 +1,6 @@
 # Skill Library 实现技术文档
 
-> 版本：1.1.0 | 更新：2026-05-22 | 对齐：PRD v1.2.0
+> 版本：1.2.0 | 更新：2026-05-22 | 对齐：PRD v1.2.0
 
 ## 0. 文档索引
 
@@ -416,79 +416,96 @@ Skill Library/
 ├── CLAUDE.md                   # 开发规则
 ├── PRD.md                      # 产品需求
 ├── IMPLEMENTATION.md           # 本文件
+├── README.md                   # 项目入口
+├── PROGRESS.md                 # 开发进度
 ├── docs-alignment.json         # 文档对齐状态
 ├── config.json                 # 技能库配置
-├── state.json                  # 状态机
+├── state.json                  # 状态机（运行时）
+├── pyproject.toml              # 包构建配置
 ├── requirements.txt            # Python 依赖
-├── setup.py                    # 包安装
+├── .gitignore
+├── epics/                      # Epic/Story 需求文档
+│   ├── E1-data-foundation/
+│   ├── E2-quality-engine/
+│   ├── ...
+│   └── E13-ecosystem/
+├── src/skill_library/          # 源码（setuptools 从 src/ 发现包）
+│   ├── __init__.py
+│   ├── cli/                    # CLI 命令（Click）
+│   │   ├── main.py             # 入口：create/lint/load/version
+│   │   ├── create_cmd.py
+│   │   ├── lint_cmd.py
+│   │   ├── load_cmd.py
+│   │   └── version_cmd.py
+│   ├── state/                  # 状态机引擎
+│   │   ├── machine.py          # 状态机（含 agent 注册/隔离）
+│   │   ├── manager.py          # 状态管理
+│   │   ├── config.py           # 配置验证
+│   │   ├── enums.py            # 枚举定义
+│   │   └── *.schema.json       # JSON Schema
+│   ├── quality/                # 质量检测引擎
+│   │   ├── lint.py             # lint 入口（原子 7 项 + 工作流 4 项）
+│   │   ├── models.py           # 数据模型
+│   │   ├── description_quality.py  # Description 质量评估
+│   │   └── rules/              # 规则实现
+│   │       ├── name_format.py
+│   │       ├── description.py
+│   │       ├── body_length.py
+│   │       ├── references.py
+│   │       ├── allowed_tools.py
+│   │       ├── metadata.py
+│   │       ├── bloat.py        # 膨胀检测（E13-S2）
+│   │       └── workflow_*.py   # 工作流 4 项规则
+│   ├── registry/               # Skill 注册表
+│   │   ├── scanner.py          # 目录扫描
+│   │   ├── indexer.py          # 索引（含按 agent 查询）
+│   │   └── parser.py           # SKILL.md 解析
+│   ├── loader/                 # 渐进式加载
+│   │   ├── metadata.py         # L1 元数据加载
+│   │   ├── instructions.py     # L2 指令加载
+│   │   ├── resources.py        # L3 资源加载
+│   │   ├── token_estimator.py  # Token 估算
+│   │   ├── lifecycle.py        # 加载生命周期管理
+│   │   └── eviction.py         # LRU 淘汰策略
+│   ├── adapters/               # Agent 适配
+│   │   ├── base.py             # 适配器基类
+│   │   ├── generic.py          # 通用适配
+│   │   ├── claude_code.py      # Claude Code 适配
+│   │   └── registry.py         # 适配器注册
+│   └── templates/              # 模板引擎
+│       └── engine.py           # 原子/工作流模板生成
 ├── skills/                     # Skill 仓库
-│   └── meta/
-│       └── skill-manager/      # 元 skill
-│           ├── SKILL.md
-│           ├── references/
-│           └── scripts/
-├── quality/                    # 质量检测
-│   ├── __init__.py
-│   ├── lint_atomic.py          # 原子 skill lint
-│   ├── lint_workflow.py        # 工作流 skill lint
-│   ├── rules/
-│   │   ├── __init__.py
-│   │   ├── name_format.py
-│   │   ├── description.py
-│   │   ├── body_length.py
-│   │   ├── references.py
-│   │   └── metadata.py
-│   └── utils.py
-├── registry/                   # Skill 注册
-│   ├── __init__.py
-│   ├── scanner.py              # 目录扫描
-│   ├── indexer.py              # 索引管理
-│   └── query.py                # 查询接口
-├── adapters/                   # Agent 适配
-│   ├── __init__.py
-│   ├── base.py                 # 适配器基类
-│   ├── claude_code.py          # Claude Code 适配
-│   └── hermes.py               # Hermes 适配（P2）
-├── loader/                     # 渐进式加载
-│   ├── __init__.py
-│   ├── metadata.py             # L1 加载
-│   ├── instructions.py         # L2 加载
-│   └── resources.py            # L3 加载
-├── state/                      # 状态机
-│   ├── __init__.py
-│   ├── machine.py              # 状态机引擎
-│   ├── transitions.py          # 状态转换规则
-│   └── validators.py           # 前置检查
-├── commands/                   # CLI 命令
-│   ├── __init__.py
-│   ├── init.py
-│   ├── mount.py
-│   ├── lint.py
-│   └── classify.py
-├── templates/                  # Skill 模板
-│   ├── atomic/
-│   │   └── SKILL.md.template
-│   └── workflow/
-│       └── SKILL.md.template
+│   └── skill-manager/          # 元 skill（自管理）
+│       ├── SKILL.md
+│       ├── references/cli-examples.md
+│       └── scripts/scan-and-register.sh
+├── templates/community/        # 社区模板库
+│   ├── data-validator/SKILL.md
+│   ├── web-researcher/SKILL.md
+│   └── code-reviewer/SKILL.md
 ├── research/                   # 调研文档
 │   ├── claude-code-skill-format.md
 │   └── skill-classification-and-quality.md
-└── tests/                      # 测试
-    ├── test_quality.py
-    ├── test_registry.py
-    ├── test_state.py
-    └── test_adapters.py
+└── tests/                      # 测试（按模块分包）
+    ├── test_cli/
+    ├── test_state/             # 含 agent 注册/查询/配置验证
+    ├── test_quality/           # 含 bloat + description_quality
+    ├── test_registry/
+    ├── test_loader/            # 含 eviction
+    ├── test_adapters/
+    └── test_templates/
 ```
 
 ### 5.2 关键文件说明
 
 | 文件 | 用途 | 格式 |
 |------|------|------|
+| `pyproject.toml` | 包构建配置（setuptools + entry_points） | TOML |
 | `config.json` | 技能库配置（路径、agent 信息） | JSON |
 | `state.json` | 状态机（single source of truth） | JSON |
-| `SKILL.md` | skill 主文档 | YAML frontmatter + Markdown |
-| `quality/rules/*.py` | lint 规则实现 | Python |
-| `adapters/*.py` | agent 适配器 | Python |
+| `src/skill_library/cli/main.py` | CLI 入口（Click group） | Python |
+| `src/skill_library/quality/lint.py` | lint 入口（11 项规则 + 膨胀检测） | Python |
+| `src/skill_library/loader/eviction.py` | LRU 淘汰器 | Python |
 
 ---
 

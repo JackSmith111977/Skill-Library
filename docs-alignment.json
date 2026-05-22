@@ -1,5 +1,5 @@
 {
-  "project-version": "1.4.0",
+  "project-version": "1.5.0",
   "last-alignment": "2026-05-22",
   "documents": {
     "CLAUDE.md": {
@@ -15,16 +15,16 @@
       "role": "产品需求文档（完整版）"
     },
     "IMPLEMENTATION.md": {
-      "version": "1.1.0",
+      "version": "1.2.0",
       "updated": "2026-05-22",
       "status": "aligned",
-      "role": "实现技术文档（架构+Epic 结构）"
+      "role": "实现技术文档（架构+Epic 结构+真实目录结构）"
     },
     "PROGRESS.md": {
       "version": "1.2.0",
       "updated": "2026-05-22",
       "status": "aligned",
-      "role": "开发进度索引（引用 epics/ 目录）"
+      "role": "开发进度索引（13 个 Epic 全部完成）"
     },
     "research/skill-classification-and-quality.md": {
       "version": "1.0.0",
@@ -37,6 +37,12 @@
       "updated": "2026-05-22",
       "status": "aligned",
       "role": "调研文档（Claude Code Skill 格式规范）"
+    },
+    "README.md": {
+      "version": "1.0.0",
+      "updated": "2026-05-22",
+      "status": "aligned",
+      "role": "项目 README 入口"
     }
   },
   "alignment-rules": {
