@@ -13,6 +13,7 @@ from .rules.workflow_refs import check_workflow_refs
 from .rules.workflow_steps import check_steps_complete
 from .rules.workflow_gates import check_gate_markers
 from .rules.workflow_deps import check_step_deps
+from .rules.bloat import check_bloat
 
 
 class QualityEngine:
@@ -66,6 +67,9 @@ class QualityEngine:
         meta_warnings = check_metadata(frontmatter.get("metadata"))
         warnings.extend(meta_warnings)
 
+        # E13-S2: 膨胀检测
+        warnings.extend(check_bloat(skill_path))
+
         # 计算分数
         score = max(0, 100 - len(errors) * 10 - len(warnings) * 2)
         passed = len(errors) == 0
@@ -104,6 +108,7 @@ class QualityEngine:
         errors.extend(check_references(skill_path, body))
         errors.extend(check_allowed_tools(frontmatter.get("allowed-tools")))
         warnings.extend(check_metadata(frontmatter.get("metadata")))
+        warnings.extend(check_bloat(skill_path))
 
         # 工作流 4 项规则
         metadata = frontmatter.get("metadata", {})

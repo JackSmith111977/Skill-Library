@@ -15,9 +15,11 @@ def _register_commands():
     from .lint_cmd import lint
     from .create_cmd import create
     from .load_cmd import load
+    from .version_cmd import version
     cli.add_command(lint)
     cli.add_command(create)
     cli.add_command(load)
+    cli.add_command(version)
 
 
 _register_commands()

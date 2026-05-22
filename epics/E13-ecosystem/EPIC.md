@@ -10,16 +10,16 @@
 | 优先级 | P3 |
 | Story 数 | 4 |
 | 依赖 | E9, E10, E11, E12 |
-| 状态 | `pending` |
+| 状态 | `done` |
 
 ## Story 列表
 
 | ID | Story | 状态 | 依赖 |
 |----|-------|------|------|
-| E13-S1 | CLI 入口封装 | `pending` | E2-S8, E4-S7, E6-S3 |
-| E13-S2 | Skill 膨胀检测 | `pending` | E2-S3 |
-| E13-S3 | 社区 skill 模板库 | `pending` | E6-S1, E6-S2 |
-| E13-S4 | 版本管理命令 | `pending` | E1-S3 |
+| E13-S1 | CLI 入口封装 | `done` | E2-S8, E4-S7, E6-S3 |
+| E13-S2 | Skill 膨胀检测 | `done` | E2-S3 |
+| E13-S3 | 社区 skill 模板库 | `done` | E6-S1, E6-S2 |
+| E13-S4 | 版本管理命令 | `done` | E1-S3 |
 
 ## 测试门禁
 
