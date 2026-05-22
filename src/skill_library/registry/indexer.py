@@ -92,6 +92,30 @@ class SkillIndexer:
             results.append(entry)
         return results
 
+    def query_by_agent(self, agent_id: str) -> dict[str, dict[str, Any]]:
+        """按 agent 过滤技能（返回挂载到此 agent 的 skill）。"""
+        state = self._sm.load()
+        agent = state.get("agents", {}).get(agent_id)
+        if agent is None:
+            return {}
+        agent_skills = agent.get("skills", {})
+        all_skills = state.get("skills", {})
+        return {
+            name: dict(all_skills[name])
+            for name in agent_skills
+            if name in all_skills
+        }
+
+    def query_by_agent_type(self, agent_type: str) -> dict[str, dict[str, Any]]:
+        """按 agent 类型过滤 agent。"""
+        state = self._sm.load()
+        agents = state.get("agents", {})
+        return {
+            aid: info
+            for aid, info in agents.items()
+            if info.get("agent-type") == agent_type
+        }
+
     def _build_entry(self, skill_path: Path, meta: dict[str, Any]) -> dict[str, Any]:
         """从解析结果构建 state.json 中的 skill entry"""
         md = meta.get("metadata", {})

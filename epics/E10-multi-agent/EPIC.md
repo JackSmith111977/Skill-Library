@@ -10,16 +10,16 @@
 | 优先级 | P2 |
 | Story 数 | 4 |
 | 依赖 | E7 |
-| 状态 | `pending` |
+| 状态 | `done` |
 
 ## Story 列表
 
 | ID | Story | 状态 | 依赖 |
 |----|-------|------|------|
-| E10-S1 | Agent 注册 | `pending` | E1-S2 |
-| E10-S2 | Agent 隔离存储 | `pending` | E1-S3 |
-| E10-S3 | 按 Agent 过滤查询 | `pending` | E3-S5 |
-| E10-S4 | Agent 配置验证 | `pending` | E1-S4 |
+| E10-S1 | Agent 注册 | `done` | E1-S2 |
+| E10-S2 | Agent 隔离存储 | `done` | E1-S3 |
+| E10-S3 | 按 Agent 过滤查询 | `done` | E3-S5 |
+| E10-S4 | Agent 配置验证 | `done` | E1-S4 |
 
 ## 测试门禁
 

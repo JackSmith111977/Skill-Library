@@ -4,7 +4,7 @@ from pathlib import Path
 from typing import Any
 
 from .manager import StateManager
-from .enums import MountStatus, QualityStatus, SkillType, DesignPattern, SkillCategory
+from .enums import MountStatus, QualityStatus, SkillType, DesignPattern, SkillCategory, AgentType, LoadMode
 
 
 class PreconditionError(Exception):
@@ -202,3 +202,100 @@ class StateMachine:
         if skill_name not in skills:
             raise KeyError(f"skill 未注册: {skill_name}")
         return skills[skill_name]
+
+    # ── Agent 注册 ──────────────────────────────────────────
+
+    def register_agent(
+        self, agent_id: str, agent_type: str, path: str
+    ) -> dict[str, Any]:
+        """注册 agent 到 state。"""
+        AgentType(agent_type)  # 校验枚举值
+        state = self._sm.load()
+        agents = state.setdefault("agents", {})
+        if agent_id in agents:
+            raise KeyError(f"agent 已注册: {agent_id}")
+        if not path or not Path(path).is_absolute():
+            raise ValueError(f"agent path 必须是绝对路径: {path}")
+        agents[agent_id] = {
+            "path": path,
+            "agent-type": agent_type,
+            "skill-packs": [],
+            "skills": {},
+        }
+        self._sm.save(state)
+        return dict(agents[agent_id])
+
+    def unregister_agent(self, agent_id: str) -> bool:
+        """注销 agent。"""
+        state = self._sm.load()
+        agents = state.get("agents", {})
+        if agent_id not in agents:
+            raise KeyError(f"agent 未注册: {agent_id}")
+        del agents[agent_id]
+        self._sm.save(state)
+        return True
+
+    def list_agents(self) -> dict[str, dict[str, Any]]:
+        """列出所有已注册 agent。"""
+        state = self._sm.load()
+        return dict(state.get("agents", {}))
+
+    def get_agent(self, agent_id: str) -> dict[str, Any] | None:
+        """查询单个 agent。"""
+        state = self._sm.load()
+        return state.get("agents", {}).get(agent_id)
+
+    def get_agent_skills(self, agent_id: str) -> dict[str, dict[str, Any]]:
+        """获取 agent 对应的 skill 列表。"""
+        state = self._sm.load()
+        agent = state.get("agents", {}).get(agent_id)
+        if agent is None:
+            raise KeyError(f"agent 未注册: {agent_id}")
+        return dict(agent.get("skills", {}))
+
+    def mount_to_agent(
+        self, skill_name: str, agent_id: str, adapter: str = "generic",
+        load_mode: str = "session",
+    ) -> dict[str, Any]:
+        """挂载 skill 到指定 agent 的隔离存储。"""
+        state = self._sm.load()
+        # 校验 skill 和 agent 存在
+        self._get_skill(state, skill_name)
+        agent = state.get("agents", {}).get(agent_id)
+        if agent is None:
+            raise KeyError(f"agent 未注册: {agent_id}")
+
+        agent_skills = agent.setdefault("skills", {})
+        LoadMode(load_mode)  # 校验枚举值
+        agent_skills[skill_name] = {
+            "status": "mounted",
+            "version": state["skills"][skill_name].get("version", "0.0.0"),
+            "adapter": adapter,
+            "load-mode": load_mode,
+        }
+        # 同步更新全局 mounted-to
+        if "mounted-to" not in state["skills"][skill_name]:
+            state["skills"][skill_name]["mounted-to"] = []
+        if agent_id not in state["skills"][skill_name]["mounted-to"]:
+            state["skills"][skill_name]["mounted-to"].append(agent_id)
+
+        self._sm.save(state)
+        return dict(agent_skills[skill_name])
+
+    def unmount_from_agent(self, skill_name: str, agent_id: str) -> bool:
+        """从 agent 卸载 skill。"""
+        state = self._sm.load()
+        agent = state.get("agents", {}).get(agent_id)
+        if agent is None:
+            raise KeyError(f"agent 未注册: {agent_id}")
+        agent_skills = agent.get("skills", {})
+        if skill_name not in agent_skills:
+            raise KeyError(f"skill {skill_name} 未挂载到 agent {agent_id}")
+        del agent_skills[skill_name]
+        # 同步更新全局 mounted-to
+        if skill_name in state.get("skills", {}):
+            mto = state["skills"][skill_name].get("mounted-to", [])
+            if agent_id in mto:
+                mto.remove(agent_id)
+        self._sm.save(state)
+        return True
