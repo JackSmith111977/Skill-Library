@@ -36,7 +36,7 @@ stateDiagram-v2
 | E5 | 工作流 Skill 支持 | 5 | `done` | [EPIC.md](epics/E5-workflow-support/EPIC.md) |
 | E6 | Skill 模板系统 | 4 | `done` | [EPIC.md](epics/E6-template-system/EPIC.md) |
 | E7 | Agent 适配框架 | 7 | `done` | [EPIC.md](epics/E7-agent-adapter/EPIC.md) |
-| E8 | 渐进式加载 | 6 | `pending` | [EPIC.md](epics/E8-progressive-loading/EPIC.md) |
+| E8 | 渐进式加载 | 6 | `done` | [EPIC.md](epics/E8-progressive-loading/EPIC.md) |
 | E9 | Skill Manager 元 Skill | 4 | `pending` | [EPIC.md](epics/E9-meta-skill/EPIC.md) |
 | E10 | 多 Agent 隔离 | 4 | `pending` | [EPIC.md](epics/E10-multi-agent/EPIC.md) |
 | E11 | LRU 淘汰策略 | 4 | `pending` | [EPIC.md](epics/E11-lru-eviction/EPIC.md) |
@@ -117,3 +117,10 @@ graph TD
 | 2026-05-22 | E6 | - | Epic 完成 | 4 个 Story 全部完成，14 个测试通过 |
 | 2026-05-22 | E7 | E7-S1~S7 | pending → done | Agent 适配框架完成，26 个测试通过 |
 | 2026-05-22 | E7 | - | Epic 完成 | 7 个 Story 全部完成，26 个测试通过 |
+| 2026-05-22 | E8 | E8-S1 | pending → done | L1 元数据加载器，3 个测试通过 |
+| 2026-05-22 | E8 | E8-S2 | pending → done | L2 指令加载器，4 个测试通过 |
+| 2026-05-22 | E8 | E8-S3 | pending → done | L3 资源加载器，5 个测试通过 |
+| 2026-05-22 | E8 | E8-S4 | pending → done | Token 估算器，3 个测试通过 |
+| 2026-05-22 | E8 | E8-S5 | pending → done | 加载生命周期管理，8 个测试通过 |
+| 2026-05-22 | E8 | E8-S6 | pending → done | load CLI 命令，23 个测试（全部 loader 测试） |
+| 2026-05-22 | E8 | - | Epic 完成 | 6 个 Story 全部完成，23 个测试通过 |

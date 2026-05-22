@@ -21,7 +21,7 @@
       "role": "实现技术文档（架构+Epic 结构）"
     },
     "PROGRESS.md": {
-      "version": "1.1.0",
+      "version": "1.2.0",
       "updated": "2026-05-22",
       "status": "aligned",
       "role": "开发进度索引（引用 epics/ 目录）"

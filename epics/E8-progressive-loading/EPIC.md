@@ -10,18 +10,18 @@
 | 优先级 | P1 |
 | Story 数 | 6 |
 | 依赖 | E3 |
-| 状态 | `pending` |
+| 状态 | `done` |
 
 ## Story 列表
 
 | ID | Story | 状态 | 依赖 |
 |----|-------|------|------|
-| E8-S1 | L1 元数据加载器 | `pending` | E3-S1, E3-S2 |
-| E8-S2 | L2 指令加载器 | `pending` | E3-S2 |
-| E8-S3 | L3 资源加载器 | `pending` | - |
-| E8-S4 | Token 估算器 | `pending` | - |
-| E8-S5 | 加载生命周期管理 | `pending` | E8-S1~S3 |
-| E8-S6 | load CLI 命令 | `pending` | E8-S1 |
+| E8-S1 | L1 元数据加载器 | `done` | E3-S1, E3-S2 |
+| E8-S2 | L2 指令加载器 | `done` | E3-S2 |
+| E8-S3 | L3 资源加载器 | `done` | - |
+| E8-S4 | Token 估算器 | `done` | - |
+| E8-S5 | 加载生命周期管理 | `done` | E8-S1~S3 |
+| E8-S6 | load CLI 命令 | `done` | E8-S1 |
 
 ## 测试门禁
 

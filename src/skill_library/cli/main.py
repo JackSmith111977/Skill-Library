@@ -14,8 +14,10 @@ def cli():
 def _register_commands():
     from .lint_cmd import lint
     from .create_cmd import create
+    from .load_cmd import load
     cli.add_command(lint)
     cli.add_command(create)
+    cli.add_command(load)
 
 
 _register_commands()
