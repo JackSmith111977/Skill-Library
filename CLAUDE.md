@@ -1,6 +1,6 @@
 # CLAUDE.md
 
-> 版本：1.0.0 | 更新：2026-05-22
+> 版本：1.1.0 | 更新：2026-05-22
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
@@ -14,12 +14,22 @@ Agent Skill Library — 跨项目的 skill 管理系统。元 skill 管理其他
 
 ```
 skill-name/
-├── SKILL.md              # 必需：YAML frontmatter + Markdown body
-├── references/           # 可选：按需加载的参考文档
-├── scripts/              # 可选：可执行脚本
-├── temp/                 # 可选：过程文件
-└── assets/               # 可选：模板、资源文件
+├── SKILL.md                    # 必需：通用版本（YAML frontmatter + Markdown body）
+├── agents/                     # 可选：Agent 适配版本
+│   ├── claude-code/SKILL.md    # Claude Code 版
+│   ├── hermes/SKILL.md         # Hermes 版
+│   └── ...
+├── references/                 # 可选：按需加载的参考文档（共享）
+├── scripts/                    # 可选：可执行脚本（共享）
+├── temp/                       # 可选：过程文件
+└── assets/                     # 可选：模板、资源文件（共享）
 ```
+
+**Agent 适配规则**：
+- 通用 `SKILL.md` 是默认版本，必须存在
+- `agents/<agent-name>/SKILL.md` 是特定 agent 适配版本，可选
+- 安装时优先使用匹配的 agent 版本，无匹配则降级到通用版本
+- 共享资源（references/scripts/assets）对所有 agent 版本通用
 
 ### Frontmatter
 
@@ -78,5 +88,6 @@ Skill Library/
 - 版本管理：语义化版本（MAJOR.MINOR.PATCH）
 - 质量检测：每个 skill 提交前运行 lint（原子 7 项 + 工作流 4 项）
 - 分类：每个 skill 必须声明 pack + type + design-pattern + skill-type
+- Agent 适配：通用 SKILL.md 必须存在，agent 版本可选，降级到通用版本
 - 状态机驱动：所有管理操作必须读状态 → 前置检查 → 执行 → 写状态
 - 元 skill 自管理：管理功能本身也是标准 skill
