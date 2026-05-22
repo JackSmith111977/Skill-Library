@@ -1,30 +1,30 @@
 {
-  "project-version": "1.5.0",
+  "project-version": "1.6.0",
   "last-alignment": "2026-05-22",
   "documents": {
     "CLAUDE.md": {
-      "version": "1.4.0",
+      "version": "1.5.0",
       "updated": "2026-05-22",
       "status": "aligned",
-      "role": "开发规则（含强制开发原则 + 状态更新流程）"
+      "role": "开发规则（含需求新增流程 + 强制开发原则 + 状态更新流程）"
     },
     "PRD.md": {
-      "version": "1.2.0",
+      "version": "1.3.0",
       "updated": "2026-05-22",
       "status": "aligned",
-      "role": "产品需求文档（完整版）"
+      "role": "产品需求文档（含 §11 Skill 创建元技能）"
     },
     "IMPLEMENTATION.md": {
-      "version": "1.2.0",
+      "version": "1.3.0",
       "updated": "2026-05-22",
       "status": "aligned",
-      "role": "实现技术文档（架构+Epic 结构+真实目录结构）"
+      "role": "实现技术文档（含 E14 Skill 创建元技能）"
     },
     "PROGRESS.md": {
       "version": "1.2.0",
       "updated": "2026-05-22",
       "status": "aligned",
-      "role": "开发进度索引（13 个 Epic 全部完成）"
+      "role": "开发进度索引（14 个 Epic 全部完成）"
     },
     "research/skill-classification-and-quality.md": {
       "version": "1.0.0",
@@ -52,7 +52,7 @@
     }
   },
   "alignment-rules": {
-    "version-sync": "所有文档版本号必须与 project-version 一致",
+    "version-sync": "所有文档版本号应反映实际变更内容，无需与 project-version 强制一致",
     "date-sync": "所有文档 updated 日期必须 >= last-alignment",
     "cross-reference": "文档间引用必须指向存在的文件",
     "content-consistency": "同一概念在不同文档中的描述必须一致"

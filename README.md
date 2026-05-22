@@ -96,7 +96,7 @@ skill-manager --version        # 版本号
 
 ## 项目状态
 
-全部 **13 个 Epic**，**69 个 Story** 开发完成，**345 个测试** 通过。
+全部 **14 个 Epic**，**71 个 Story** 开发完成，**345 个测试** 通过。
 
 | Epic | 主题 | Story 数 | 状态 |
 |------|------|----------|------|
@@ -113,6 +113,7 @@ skill-manager --version        # 版本号
 | E11 | LRU 淘汰策略 | 4 | ✅ |
 | E12 | Description 质量评估 | 4 | ✅ |
 | E13 | 生态完善 | 4 | ✅ |
+| E14 | Skill 创建元技能 | 2 | ✅ |
 
 详细进度见 [PROGRESS.md](PROGRESS.md)。
 
