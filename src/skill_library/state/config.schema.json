@@ -10,6 +10,12 @@
       "type": "string",
       "description": "技能库绝对路径"
     },
+    "max-loaded-skills": {
+      "type": "integer",
+      "minimum": 1,
+      "default": 10,
+      "description": "每个 agent 最大并行加载的 skill 数，超限触发 LRU 淘汰"
+    },
     "agents": {
       "type": "object",
       "description": "Agent 配置，key 为 agent-id",

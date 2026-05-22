@@ -117,3 +117,24 @@ def test_config_schema_agent_additional_property(schema, valid_config):
     valid_config["agents"]["claude-code-main"]["extra"] = "value"
     with pytest.raises(ValidationError):
         validate(instance=valid_config, schema=schema)
+
+
+def test_config_schema_max_loaded_skills_valid(schema):
+    """max-loaded-skills 合法值"""
+    config = {
+        "library-path": "D:\\test",
+        "max-loaded-skills": 20,
+        "agents": {}
+    }
+    validate(instance=config, schema=schema)
+
+
+def test_config_schema_max_loaded_skills_invalid(schema):
+    """max-loaded-skills < 1 → 校验失败"""
+    config = {
+        "library-path": "D:\\test",
+        "max-loaded-skills": 0,
+        "agents": {}
+    }
+    with pytest.raises(ValidationError):
+        validate(instance=config, schema=schema)

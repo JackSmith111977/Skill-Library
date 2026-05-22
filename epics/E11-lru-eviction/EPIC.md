@@ -10,16 +10,16 @@
 | 优先级 | P2 |
 | Story 数 | 4 |
 | 依赖 | E8 |
-| 状态 | `pending` |
+| 状态 | `done` |
 
 ## Story 列表
 
 | ID | Story | 状态 | 依赖 |
 |----|-------|------|------|
-| E11-S1 | 最大加载数配置 | `pending` | - |
-| E11-S2 | LRU 淘汰器 | `pending` | E11-S1, E8-S5 |
-| E11-S3 | last-used 时间戳更新 | `pending` | E1-S3 |
-| E11-S4 | 淘汰事件日志 | `pending` | E11-S2 |
+| E11-S1 | 最大加载数配置 | `done` | - |
+| E11-S2 | LRU 淘汰器 | `done` | E11-S1, E8-S5 |
+| E11-S3 | last-used 时间戳更新 | `done` | E1-S3 |
+| E11-S4 | 淘汰事件日志 | `done` | E11-S2 |
 
 ## 测试门禁
 

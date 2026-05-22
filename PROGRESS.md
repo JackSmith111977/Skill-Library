@@ -39,7 +39,7 @@ stateDiagram-v2
 | E8 | 渐进式加载 | 6 | `done` | [EPIC.md](epics/E8-progressive-loading/EPIC.md) |
 | E9 | Skill Manager 元 Skill | 4 | `done` | [EPIC.md](epics/E9-meta-skill/EPIC.md) |
 | E10 | 多 Agent 隔离 | 4 | `done` | [EPIC.md](epics/E10-multi-agent/EPIC.md) |
-| E11 | LRU 淘汰策略 | 4 | `pending` | [EPIC.md](epics/E11-lru-eviction/EPIC.md) |
+| E11 | LRU 淘汰策略 | 4 | `done` | [EPIC.md](epics/E11-lru-eviction/EPIC.md) |
 | E12 | Description 质量评估 | 4 | `pending` | [EPIC.md](epics/E12-description-quality/EPIC.md) |
 | E13 | 生态完善 | 4 | `pending` | [EPIC.md](epics/E13-ecosystem/EPIC.md) |
 
@@ -134,3 +134,8 @@ graph TD
 | 2026-05-22 | E10 | E10-S3 | pending → done | 按 Agent 过滤查询（query_by_agent/agent_type） |
 | 2026-05-22 | E10 | E10-S4 | pending → done | Agent 配置验证增强（type/packs/existence） |
 | 2026-05-22 | E10 | - | Epic 完成 | 4 个 Story 全部完成，29 个测试，300 总测试通过 |
+| 2026-05-22 | E11 | E11-S1 | pending → done | max-loaded-skills 配置（schema + 默认值 10） |
+| 2026-05-22 | E11 | E11-S2 | pending → done | LRU 淘汰器实现（evict_if_needed/_find_lru） |
+| 2026-05-22 | E11 | E11-S3 | pending → done | last-used 时间戳更新（load/get 自动更新） |
+| 2026-05-22 | E11 | E11-S4 | pending → done | 淘汰事件日志（events/get_events/clear_events） |
+| 2026-05-22 | E11 | - | Epic 完成 | 4 个 Story 全部完成，15 个测试，315 总测试通过 |
