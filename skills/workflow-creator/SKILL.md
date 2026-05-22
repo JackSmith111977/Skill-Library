@@ -142,7 +142,7 @@ Lint checks 4 additional workflow rules:
 
 ```bash
 cd <project-root>
-skill-manager lint skills/<pack>/<workflow-name>
+python -m skill_library.quality.lint skills/<pack>/<workflow-name>
 ```
 
 | # | Rule | What it checks |

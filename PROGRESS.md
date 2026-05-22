@@ -1,6 +1,6 @@
 # Skill Library 开发进度
 
-> 版本：1.2.0 | 更新：2026-05-22
+> 版本：1.3.0 | 更新：2026-05-23
 
 ## 状态定义
 
@@ -43,8 +43,9 @@ stateDiagram-v2
 | E12 | Description 质量评估 | 4 | `done` | [EPIC.md](epics/E12-description-quality/EPIC.md) |
 | E13 | 生态完善 | 4 | `done` | [EPIC.md](epics/E13-ecosystem/EPIC.md) |
 | E14 | Skill 创建元技能 | 2 | `done` | [EPIC.md](epics/E14-skill-creators/EPIC.md) |
+| E15 | skill-manager 元 Skill 重写 | 5 | `done` | [EPIC.md](epics/E15-skill-manager-rewrite/EPIC.md) |
 
-**总计**：14 个 Epic，71 个 Story
+**总计**：15 个 Epic，76 个 Story
 
 ## 文件结构
 
@@ -161,3 +162,10 @@ graph TD
 | 2026-05-22 | E14 | E14-S1 | pending → done | skill-creator SKILL.md + 3 references，lint 98 通过 |
 | 2026-05-22 | E14 | E14-S2 | pending → done | workflow-creator SKILL.md + 2 references，lint 98 通过 |
 | 2026-05-22 | E14 | - | Epic 完成 | 2 个 Story 全部完成，345 测试通过，无回归 |
+| 2026-05-23 | E15 | - | pending → in_progress | E15 Epic 创建，开始 S1 SKILL.md 重写 |
+| 2026-05-23 | E15 | E15-S1 | pending → done | SKILL.md body 重写完成，lint score 100 |
+| 2026-05-23 | E15 | E15-S2 | pending → done | references 重写完成，skill-based 示例 |
+| 2026-05-23 | E15 | E15-S3 | pending → done | scripts 适配完成，不再依赖 CLI |
+| 2026-05-23 | E15 | E15-S4 | pending → done | 交叉引用修复完成 |
+| 2026-05-23 | E15 | E15-S5 | pending → done | 最终验证通过，3/3 skill score 100 |
+| 2026-05-23 | E15 | - | Epic 完成 | 5 个 Story 全部完成，无代码改动

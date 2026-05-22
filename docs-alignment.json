@@ -1,52 +1,52 @@
 {
-  "project-version": "1.7.0",
-  "last-alignment": "2026-05-22",
+  "project-version": "1.8.0",
+  "last-alignment": "2026-05-23",
   "documents": {
     "CLAUDE.md": {
-      "version": "1.6.0",
-      "updated": "2026-05-22",
+      "version": "1.6.1",
+      "updated": "2026-05-23",
       "status": "aligned",
-      "role": "开发规则（对齐开放标准 + Profile 机制 + 格式规范更新）"
+      "role": "开发规则（Skill 即接口设计哲学 + CLI 选配说明）"
     },
     "PRD.md": {
-      "version": "1.4.0",
-      "updated": "2026-05-22",
+      "version": "1.5.0",
+      "updated": "2026-05-23",
       "status": "aligned",
-      "role": "产品需求文档（对齐开放标准 + Profile 驱动质量检测）"
+      "role": "产品需求文档（Skill 即接口设计哲学 + CLI 降级为选配）"
     },
     "IMPLEMENTATION.md": {
-      "version": "1.4.0",
-      "updated": "2026-05-22",
+      "version": "1.5.0",
+      "updated": "2026-05-23",
       "status": "aligned",
-      "role": "实现技术文档（Profile 机制 + register 命令设计）"
+      "role": "实现技术文档（Skill 即接口架构 + skill-driven 使用说明）"
     },
     "PROGRESS.md": {
-      "version": "1.2.0",
-      "updated": "2026-05-22",
+      "version": "1.3.0",
+      "updated": "2026-05-23",
       "status": "aligned",
-      "role": "开发进度索引（14 个 Epic 全部完成）"
+      "role": "开发进度索引（15 个 Epic，76 个 Story）"
     },
     "research/skill-classification-and-quality.md": {
       "version": "1.0.0",
-      "updated": "2026-05-22",
+      "updated": "2026-05-23",
       "status": "aligned",
       "role": "调研文档（分类体系+质量标准）"
     },
     "research/claude-code-skill-format.md": {
       "version": "1.1.0",
-      "updated": "2026-05-22",
+      "updated": "2026-05-23",
       "status": "aligned",
       "role": "调研文档（Claude Code Skill 格式规范）"
     },
     "research/skill-creator-patterns.md": {
       "version": "1.0.0",
-      "updated": "2026-05-22",
+      "updated": "2026-05-23",
       "status": "aligned",
       "role": "调研文档（skill-creator 元技能模式调研）"
     },
     "README.md": {
       "version": "1.0.0",
-      "updated": "2026-05-22",
+      "updated": "2026-05-23",
       "status": "aligned",
       "role": "项目 README 入口"
     }

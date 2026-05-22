@@ -140,7 +140,7 @@ Run lint to confirm format compliance:
 
 ```bash
 cd <project-root>
-skill-manager lint skills/<pack>/<name>
+python -m skill_library.quality.lint skills/<pack>/<name>
 ```
 
 **Must pass** (score = 100, no errors). If lint fails, fix issues and re-run.

@@ -1,6 +1,6 @@
 # Skill Library 实现技术文档
 
-> 版本：1.3.0 | 更新：2026-05-22 | 对齐：PRD v1.3.0
+> 版本：1.5.0 | 更新：2026-05-23 | 对齐：PRD v1.5.0
 
 ## 0. 文档索引
 
@@ -48,7 +48,7 @@ graph TB
 
 | 模块 | 职责 | 输入 | 输出 |
 |------|------|------|------|
-| **Skill Manager** | 元 skill，管理入口 | 用户指令 | 操作结果 |
+| **Skill Manager** | 元 skill SKILL.md，指导 AI 直接操作文件/state | SKILL.md 指令 | 文件操作 + 状态变更 |
 | **状态机引擎** | 读→检查→执行→写 | 操作请求 | 状态变更 |
 | **Skill Registry** | skill 注册索引 | skill 目录 | 索引条目 |
 | **质量检测引擎** | lint 规则执行 | skill 目录 | 检测报告 |
@@ -288,15 +288,14 @@ class SkillRegistry:
         """获取 skill 路径（含 agent 适配降级）"""
 ```
 
-**CLI 注册命令**：
+**注册流程**（skill-based）：`skill-manager SKILL.md` 指导 AI 调用 `scan_skills()` → `parse_skill_md()` → `state["skills"][name] = {...}` → 原子写入 state.json。
 
+**CLI 选配**（效果等同）：
 ```bash
 skill-manager register <skills_dir>          # 注册目录下所有 skill
 skill-manager register <skills_dir> --dry-run # 预览不写入
 skill-manager register <skills_dir> --pack development  # 指定 pack
 ```
-
-注册流程：`scan_skills()` → `parse_skill_md()` → `state["skills"][name] = {...}` → 原子写入 state.json。
 
 ### 4.3 质量检测引擎
 
@@ -515,7 +514,7 @@ Skill Library/
 │   └── E13-ecosystem/
 ├── src/skill_library/          # 源码（setuptools 从 src/ 发现包）
 │   ├── __init__.py
-│   ├── cli/                    # CLI 命令（Click）
+│   ├── cli/                    # CLI 命令（选配层）
 │   │   ├── main.py             # 入口：create/lint/load/version
 │   │   ├── create_cmd.py
 │   │   ├── lint_cmd.py
@@ -587,7 +586,7 @@ Skill Library/
 | `pyproject.toml` | 包构建配置（setuptools + entry_points） | TOML |
 | `config.json` | 技能库配置（路径、agent 信息） | JSON |
 | `state.json` | 状态机（single source of truth） | JSON |
-| `src/skill_library/cli/main.py` | CLI 入口（Click group） | Python |
+| `src/skill_library/cli/main.py` | CLI 入口（选配层，Click group） | Python |
 | `src/skill_library/quality/lint.py` | lint 入口（11 项规则 + 膨胀检测） | Python |
 | `src/skill_library/loader/eviction.py` | LRU 淘汰器 | Python |
 
@@ -718,37 +717,47 @@ def test_claude_code_adapter():
 git clone https://github.com/user/skill-library.git
 cd skill-library
 
-# 安装依赖
+# 安装 Python 依赖（工具库层必需）
 pip install -r requirements.txt
+```
 
-# 安装为 CLI 工具
+### 8.2 使用方式
+
+系统提供两种等价的接口，**推荐使用 skill-based 方式**：
+
+#### 方式一：Skill-based（推荐）
+
+AI Agent 通过加载 skill-manager/ skill-creator/ workflow-creator 的 SKILL.md 执行管理操作。这是系统的原生接口，无需 CLI 安装。
+
+```
+# 在 Claude Code 中触发：
+"帮我安装这个 skill 到 Claude Code"
+  → skill-manager SKILL.md 指导 AI 执行：
+     1. 读取 state.json
+     2. lint 检查质量
+     3. cp -r 复制目录到 ~/.claude/skills/<name>/
+     4. 更新 state.json
+
+"卸载这个 skill"
+  → skill-manager 指导 AI：rm -rf + 更新 state.json
+
+"检查 skill 质量"
+  → skill-manager 指导 AI：Bash 调用 Python 质量引擎
+```
+
+#### 方式二：CLI 选配（效果等同）
+
+```bash
+# 安装 CLI（可选）
 pip install -e .
-```
 
-### 8.2 初始化
-
-```bash
-# 初始化技能库
+# 初始化
 skill-manager init
-
-# 扫描已有 skill
-skill-manager scan
-
-# 查看状态
-skill-manager status
-```
-
-### 8.3 日常使用
-
-```bash
-# 创建新 skill
-skill-manager create my-skill --pack development --type atomic
-
 # 质量检测
 skill-manager lint my-skill
-
-# 挂载到 agent
+# 挂载/卸载
 skill-manager mount my-skill --agent claude-code
+skill-manager unmount my-skill
 
 # 分类
 skill-manager classify my-skill --pack development --pattern tool-wrapper

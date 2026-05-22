@@ -1,6 +1,6 @@
 # Skill Library 产品需求文档（PRD）
 
-> 版本：1.3.0 | 更新：2026-05-22
+> 版本：1.5.0 | 更新：2026-05-23
 
 ## 1. 项目概述
 
@@ -221,33 +221,60 @@ skill-name/
 
 ## 5. 管理元技能（skill-manager）
 
-管理功能本身是标准格式的元 skill，所有操作以状态机驱动。
+管理功能本身是标准格式的元 skill。**SKILL.md 是主接口**，指导 AI Agent 直接执行文件操作和状态管理。Python 模块是底层工具库，CLI 是选配层。
 
-### 5.1 初始化（init）
+### 5.1 设计哲学：Skill 即接口
 
 ```
-skill-manager init
-├── 询问技能库绝对路径 → 写入 config.json
-├── 扫描并确认各 Agent 的 skill 挂载地址 → 写入 config.json
-├── 扫描 skills/ 目录 → 建立 state.json 的 skills 索引
-└── 输出初始化摘要
+┌──────────────────────────────────────────┐
+│  Skill 层（主接口）                       │
+│  skill-manager SKILL.md                  │
+│  指导 AI 直接操作文件和 state.json         │
+├──────────────────────────────────────────┤
+│  工具库层（Python 模块）                  │
+│  quality/ state/ registry/ loader        │
+│  被 SKILL.md 通过 Bash 调用              │
+├──────────────────────────────────────────┤
+│  CLI 层（选配）                           │
+│  skill-manager（Click）                  │
+│  薄封装，非必需运行时                      │
+└──────────────────────────────────────────┘
 ```
+
+**核心原则：**
+- 所有管理操作通过 skill-manager 的 SKILL.md 指导 AI 完成
+- Mount/unmount 本质是文件目录操作（cp/rm），AI 直接执行
+- Lint/register 等操作通过 Bash 调用 Python 工具模块
+- CLI 是可选便捷层，不是系统必需的运行时
 
 ### 5.2 管理操作
 
 每个操作遵循：**读状态 → 前置检查 → 执行 → 写状态**
 
-| 操作 | 前置检查 | 状态变更 |
-|------|----------|----------|
-| `init` | 无 | 初始化 config.json + state.json |
-| `mount` | skill 存在且 quality=passed，agent 存在 | agents.skills 写入 mounted，skills.mounted-to 更新 |
-| `unmount` | skill 已 mounted | agents.skills 写入 unmounted，skills.mounted-to 清除 |
-| `status` | 无（只读） | 无 |
-| `classify` | skill 存在且未分类 | skills 写入 pack + type + design-pattern + skill-type |
-| `lint` | skill 存在 | skills 写入 quality-status |
-| `lint-workflow` | workflow skill 存在 | skills 写入 quality-status（含引用原子 skill 存在性校验） |
+| 操作 | 机制 | 前置检查 | 状态变更 |
+|------|------|----------|----------|
+| mount | `cp -r <skill-dir> <agent-dir>/<name>/` | quality=passed，agent 存在 | agents.skills 写入 mounted |
+| unmount | `rm -rf <agent-dir>/<name>/` | 已挂载 | agents.skills 清除 |
+| lint | `python -m skill_library.quality.lint` | skill 存在 | skills 写入 quality-status |
+| register | 扫描目录 + 写 state.json | 目录存在 | skills 段新增条目 |
+| init | 创建 config.json + state.json | 无 | 初始化配置 |
+| status | 读 state.json | 无（只读） | 无 |
 
 **异常处理**：操作失败时写入 `error` 状态 + 错误原因，不中断后续操作。
+
+### 5.3 CLI 选配层（附录）
+
+管理功能同时提供 Click CLI 工具作为选配。可通过 `pip install -e .` 安装：
+
+```
+skill-manager init          # 初始化
+skill-manager lint <path>   # 质量检测
+skill-manager mount <name>  # 挂载 skill
+skill-manager unmount <name>  # 卸载 skill
+skill-manager register <dir>  # 注册 skill
+```
+
+CLI 是 skill 层的薄封装，两者底层复用同一套 Python 模块（quality/state/registry）。CLI 非必需——直接通过 skill-manager SKILL.md 操作效果相同。
 
 ---
 
@@ -382,14 +409,15 @@ skill-manager init
 
 ### 11.1 定位
 
-除 `skill-manager` CLI 工具外，还需要 SKILL.md 格式的元技能，专门指导 AI Agent（如 Claude）如何创建符合本项目标准的 skill。
+skill-manager、skill-creator、workflow-creator 三者都是标准 SKILL.md 格式的元技能，区别在于职责范围：
 
 | 元技能 | 职责 | 触发场景 |
 |--------|------|----------|
+| `skill-manager` | 管理 skill 全生命周期（mount/unmount/lint/register） | 用户要求"管理/安装/卸载 skill"时 |
 | `skill-creator` | 指导 Agent 创建标准化原子 skill | 用户要求"创建一个 skill"时 |
 | `workflow-creator` | 指导 Agent 创建工作流 skill | 用户要求"创建一个工作流 skill"时 |
 
-这两个元技能不是 Python 代码模块，而是标准的 SKILL.md 文档。它们教会 AI Agent 遵循项目格式规范新建 skill。
+三个元技能都不是 CLI 工具或 Python 模块，而是标准的 SKILL.md 文档。它们教会 AI Agent 遵循项目格式规范执行管理或创建操作。底层 Python 模块（quality/state/registry/loader）作为工具库被元技能通过 Bash 调用。
 
 ### 11.2 skill-creator 能力
 

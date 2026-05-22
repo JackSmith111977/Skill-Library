@@ -1,6 +1,6 @@
 # CLAUDE.md
 
-> 版本：1.5.0 | 更新：2026-05-22
+> 版本：1.6.1 | 更新：2026-05-23
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
@@ -230,6 +230,6 @@ Skill Library/
 - 分类：项目自有 skill 声明 pack + type + design-pattern + skill-type（可选 metadata）
 - Agent 适配：通用 SKILL.md 必须存在，agent 版本可选，降级到通用版本
 - 状态机驱动：所有管理操作必须读状态 → 前置检查 → 执行 → 写状态
-- 元 skill 自管理：管理功能本身也是标准 skill
+- 元 skill 自管理：管理功能本身也是标准 skill（CLI 为选配层，非必需运行时）
 - **Profile 选择**：项目自有 skill 用 `skill-library`；第三方/社区 skill 用相应 profile
 - 格式对齐 [agentskills.io](https://agentskills.io/specification) 开放标准

@@ -13,119 +13,152 @@ argument-hint:
 
 # Skill Manager
 
-Manages the Skill Library: create, lint, register, mount, unmount, and query skills.
+Manages the Skill Library: lint, register, mount, unmount, and query skills. This meta-skill guides the AI to perform management operations directly via file operations and Python module calls. CLI is optional.
 
-## Quick Start
+## Prerequisites
+
+- Skill Library directory with `state.json` and `skills/` directory
+- Python dependencies installed: `pip install -r requirements.txt`
+- Target agent skill directories exist (e.g. `~/.claude/skills/` for Claude Code)
+
+## Management Operations
+
+All operations follow: **read state → precondition check → execute → write state**.
+
+### Lint — quality check
+
+Run quality checks on a skill directory via Python engine:
 
 ```bash
-# Lint a skill
-skill-manager lint ./skills/my-skill
+# Atomic skill
+python -m skill_library.quality.lint <skill-path>
 
-# Create a new skill
-skill-manager create my-skill --pack dev --type atomic --design-pattern pipeline
+# Workflow skill (extra 4 rules)
+python -m skill_library.quality.lint <skill-path> --workflow
 
-# Register newly created skills
-skill-manager register ./skills/my-skill
-
-# List registered skills
-skill-manager list
-
-# Mount a skill
-skill-manager mount my-skill
-
-# Unmount a skill
-skill-manager unmount my-skill
-
-# Load a skill into context
-skill-manager load my-skill --level L2
+# With profile
+python -m skill_library.quality.lint <skill-path> --profile claude-code
 ```
 
-## CLI Commands
+**Validates:** name format, description (profile-aware), body length, reference files exist, allowed-tools format, metadata, bloat. Workflow: ref resolution, step completeness, gate markers, dep cycles.
 
-### `skill-manager lint <skill-path>`
+### Mount — install skill to agent
 
-Runs quality checks on a skill directory. Returns exit code 0 (pass) or 1 (fail).
+Mount copies a skill directory to target agent's skill directory and updates state.
 
-**Options:**
-- `--json` — output JSON report
+```
+Step 1: Verify skill is registered and quality-status == "passed"
+  Read state.json → skills["<name>"]["quality-status"]
+  If not "passed", run lint first.
 
-**Validates:**
-- Atomic skills: SKILL.md exists, frontmatter complete, name/description/version valid, body length limits, type+design-pattern declared, path matches name
-- Workflow skills (additional): dependency refs resolve, step numbering continuous, dep graph acyclic, gate markers present for Inversion pattern
+Step 2: Copy skill directory to agent path
+  cp -r <skill-dir> <agent-path>/<name>/
+  Example: cp -r skills/dev/my-skill ~/.claude/skills/my-skill
 
-### `skill-manager create <skill-name>`
+Step 3: Update state.json
+  state["agents"]["<agent-id>"]["skills"]["<name>"] = {
+    "status": "mounted",
+    "version": "<version>",
+    "adapter": "generic"
+  }
+  state["skills"]["<name>"]["mount-status"] = "mounted"
+  state["skills"]["<name>"]["mounted-to"].append("<agent-id>")
+```
 
-Creates a new skill directory with SKILL.md from a template.
+**Precondition:** skill exists, quality-status == "passed", agent registered.
 
-**Options:**
-- `--pack <pack>` — skill pack (default: "default")
-- `--type <type>` — type: atomic|workflow|hybrid
-- `--design-pattern <pattern>` — pattern: pipeline|inversion|agentic-rag|chain|parallel
-- `--dir <dir>` — output directory (default: current dir)
+### Unmount — remove skill from agent
 
-**Templates:**
-- `atomic`: single-purpose skill with standalone instructions
-- `pipeline`: sequential steps, each building on previous output
-- `inversion`: user-driven flow with STAGE_GATE halts for confirmation
+Unmount removes skill directory from agent and updates state.
 
-### `skill-manager register <skill-path>`
+```
+Step 1: Verify skill is mounted to target agent
+  Read state.json → check agents["<agent-id>"]["skills"]["<name>"]
 
-Registers a skill in the registry. The registry tracks name, path, version, type, design-pattern, pack, category, mount-status, and quality-status.
+Step 2: Remove skill directory from agent path
+  rm -rf <agent-path>/<name>/
+  Example: rm -rf ~/.claude/skills/my-skill
 
-**Options:**
-- `--category <cat>` — category tag
-- `--force` — re-register even if already registered
+Step 3: Update state.json
+  del state["agents"]["<agent-id>"]["skills"]["<name>"]
+  state["skills"]["<name>"]["mount-status"] = "unmounted"
+  state["skills"]["<name>"]["mounted-to"].remove("<agent-id>")
+```
 
-### `skill-manager list`
+**Precondition:** skill mounted to agent.
 
-Lists all registered skills. Shows name, type, pack, mount-status, quality-status.
+### Register — add skill to state
 
-**Options:**
-- `--type <type>` — filter by type
-- `--pack <pack>` — filter by pack
-- `--design-pattern <pattern>` — filter by pattern
-- `--status <status>` — filter by mount-status
-- `--json` — JSON output
+Register scans a skill directory, reads SKILL.md frontmatter, and writes to state.json.
 
-### `skill-manager mount <skill-name>`
+```python
+# Via Python directly
+python -c "
+from skill_library.registry.scanner import scan_skills
+from skill_library.registry.parser import parse_skill_md
+from skill_library.state.manager import StateManager
 
-Mounts a skill (requires quality-status == "passed"). Mounted skills are available for use.
+sm = StateManager('state.json')
+state = sm.load()
+skills = scan_skills('<skills-dir>')
+for s in skills:
+    meta = parse_skill_md(s)
+    name = meta['name']
+    state.setdefault('skills', {})[name] = {
+        'name': name,
+        'path': str(s),
+        'version': meta.get('version', '0.0.0'),
+        'mount-status': 'unmounted',
+        'quality-status': 'unchecked',
+    }
+sm.save(state)
+"
+```
 
-### `skill-manager unmount <skill-name>`
+### Status — query state
 
-Unmounts a mounted skill.
+Read state.json to inspect registered skills, mounted status, agent assignments.
 
-### `skill-manager load <skill-name>`
+```python
+python -c "
+from skill_library.state.manager import StateManager
+sm = StateManager('state.json')
+state = sm.load()
+# Show all skills
+for name, info in state.get('skills', {}).items():
+    print(f'{name}: mount={info[\"mount-status\"]} quality={info[\"quality-status\"]}')
+# Show agents
+for aid, info in state.get('agents', {}).items():
+    print(f'Agent {aid}: {info[\"path\"]} skills={list(info.get(\"skills\", {}).keys())}')
+"
+```
 
-Loads a skill into context at the specified level. Used during runtime.
+## Multi-Agent Mounting
 
-**Options:**
-- `--level L1|L2|L3` — load level (default: L1)
-- `--path <path>` — skill path (default: from registry)
+Same skill can mount to multiple agents. Each agent has own skill directory.
 
-**Load Levels:**
-- `L1` — metadata only (name + description), ~100 tokens
-- `L2` — full SKILL.md body, ~500-2000 tokens
-- `L3` — body + bundled resources (references/, assets/), unlimited
+```
+Mount to Agent A:  cp -r skills/pack/skill  agent-A-path/skill
+Mount to Agent B:  cp -r skills/pack/skill  agent-B-path/skill
+Unmount from A:    rm -rf agent-A-path/skill  (B unaffected)
+```
 
-### `skill-manager --version`
-
-Shows version.
+state.json tracks per-agent via `agents[agent-id].skills[name]` and global `skills[name].mounted-to[]`.
 
 ## State Management
 
-The system uses two state machines:
+Two state machines:
 
 ```
-mount-status: unmounted → mounted ↔ outdated
+mount-status:  unmounted → mounted ↔ outdated
 quality-status: unchecked → passed ↔ failed
 ```
 
-Mount requires quality-status == "passed". When a skill is updated (SKILL.md changes), mount-status becomes "outdated" — remount to refresh.
+Mount requires quality-status == "passed". When skill updates (SKILL.md changes), mount-status becomes "outdated" — remount to refresh.
 
 ## Classification
 
-Each skill has a two-dimensional classification:
+Each skill has optional classification:
 
 - **design-pattern**: pipeline | inversion | agentic-rag | chain | parallel
 - **skill-type**: atomic | workflow | hybrid
@@ -143,27 +176,54 @@ Skills live under `skills/<pack-name>/<skill-name>/`. Each skill has:
 
 Atomic skills (7 checks):
 1. SKILL.md exists
-2. Frontmatter is valid YAML
-3. name field present and non-empty
-4. description field present and non-empty
-5. version is valid semver (defaults to 0.0.0)
+2. Frontmatter is valid YAML (via yaml.safe_load)
+3. name: 1-64 chars, lowercase+hyphens, matches dir name
+4. description: 1-1024 chars, profile-aware trigger check
+5. version: valid semver (defaults to 0.0.0)
 6. Body length ≤ 500 lines
-7. Skill directory name matches name field
+7. allowed-tools format (skill-library profile only)
 
 Workflow skills (4 additional):
 8. All @skill-name references resolve to existing directories
-9. Step N numbering starts at 1 and is continuous
+9. Step numbering starts at 1 and is continuous
 10. Step dependency graph has no cycles
-11. Inversion pattern SKILL.md contains STAGE_GATE markers
+11. Inversion pattern contains STAGE_GATE markers
 
-## Quality Commands
+## Batch Operations
 
 ```bash
-# Lint all skills
+# Lint all project skills
 for dir in skills/*/; do
-  skill-manager lint "$dir"
+  python -m skill_library.quality.lint "$dir"
 done
 
 # Lint a specific pack
-skill-manager lint skills/dev
+python -m skill_library.quality.lint skills/dev
+
+# Register all skills in a directory
+python -c "
+from skill_library.registry.scanner import scan_skills
+from skill_library.registry.parser import parse_skill_md
+from skill_library.state.manager import StateManager
+sm = StateManager('state.json')
+state = sm.load()
+for s in scan_skills('skills'):
+    meta = parse_skill_md(s)
+    name = meta['name']
+    state.setdefault('skills', {})[name] = {'name': name, 'path': str(s), 'mount-status': 'unmounted', 'quality-status': 'unchecked'}
+sm.save(state)
+"
 ```
+
+## Appendix: CLI (Optional)
+
+The system also provides a Click CLI as thin wrapper. Install with `pip install -e .`:
+
+```bash
+skill-manager lint <path>       # quality check
+skill-manager register <dir>    # register skills
+skill-manager mount <name>      # mount (requires CLI runtime)
+skill-manager unmount <name>    # unmount
+```
+
+CLI effects are identical to skill-based operations. Not required — prefer skill-based workflow.
