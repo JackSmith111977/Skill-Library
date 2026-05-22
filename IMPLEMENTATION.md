@@ -1,6 +1,15 @@
 # Skill Library 实现技术文档
 
-> 版本：1.0.0 | 更新：2026-05-22 | 对齐：PRD v1.2.0
+> 版本：1.1.0 | 更新：2026-05-22 | 对齐：PRD v1.2.0
+
+## 0. 文档索引
+
+| 文档 | 用途 |
+|------|------|
+| PRD.md | 产品需求（What + Why） |
+| IMPLEMENTATION.md | 实现技术（How） |
+| PROGRESS.md | 开发进度跟踪（Status） |
+| CLAUDE.md | 开发规则（Rules） |
 
 ## 1. 系统架构
 
@@ -74,69 +83,73 @@ sequenceDiagram
 
 ## 2. 实现路线
 
-### 2.1 阶段规划
+> 详细进度跟踪见 `PROGRESS.md`
+
+### 2.1 Epic 总览
+
+| Epic | 主题 | Story 数 | 依赖 | 优先级 |
+|------|------|----------|------|--------|
+| E1 | 数据基础层 | 5 | - | P0 |
+| E2 | 质量检测引擎 | 8 | E1 | P0 |
+| E3 | Skill Registry | 6 | E1 | P0 |
+| E4 | 状态机引擎 | 8 | E1, E3 | P0 |
+| E5 | 工作流 Skill 支持 | 5 | E2, E3 | P1 |
+| E6 | Skill 模板系统 | 4 | - | P1 |
+| E7 | Agent 适配框架 | 7 | - | P1 |
+| E8 | 渐进式加载 | 6 | E3 | P1 |
+| E9 | Skill Manager 元 Skill | 4 | E2, E4, E5, E6 | P1 |
+| E10 | 多 Agent 隔离 | 4 | E7 | P2 |
+| E11 | LRU 淘汰策略 | 4 | E8 | P2 |
+| E12 | Description 质量评估 | 4 | E2 | P2 |
+| E13 | 生态完善 | 4 | E9, E10, E11, E12 | P3 |
+
+### 2.2 依赖关系
+
+```mermaid
+graph TD
+    E1[E1: 数据基础层] --> E2[E2: 质量检测]
+    E1 --> E3[E3: Registry]
+    E1 --> E4[E4: 状态机]
+    E2 --> E5[E5: 工作流支持]
+    E2 --> E9[E9: 元 Skill]
+    E3 --> E4
+    E3 --> E8[E8: 渐进式加载]
+    E4 --> E9
+    E5 --> E9
+    E6[E6: 模板系统] --> E9
+    E7[E7: Agent 适配] --> E10[E10: 多 Agent 隔离]
+    E8 --> E11[E11: LRU 淘汰]
+    E2 --> E12[E12: Description 评估]
+    E9 --> E13[E13: 生态完善]
+    E10 --> E13
+    E11 --> E13
+    E12 --> E13
+```
+
+### 2.3 实现阶段
 
 ```mermaid
 gantt
     title Skill Library 实现路线
     dateFormat  YYYY-MM-DD
     section P0 核心基础
-    state.json 结构设计       :done, p0a, 2026-05-22, 1d
-    原子 skill 7 项 lint      :active, p0b, 2026-05-23, 3d
-    skill-manager 元 skill    :p0c, after p0b, 2d
+    E1 数据基础层           :e1, 2026-05-23, 2d
+    E2 质量检测引擎         :e2, after e1, 3d
+    E3 Skill Registry       :e3, after e1, 2d
+    E4 状态机引擎           :e4, after e3, 3d
     section P1 扩展功能
-    工作流 skill 4 项 lint    :p1a, after p0c, 2d
-    渐进式加载机制            :p1b, after p1a, 3d
-    Agent 适配框架            :p1c, after p1b, 3d
+    E5 工作流支持           :e5, after e2, 2d
+    E6 模板系统             :e6, 2026-05-28, 2d
+    E7 Agent 适配           :e7, 2026-05-28, 3d
+    E8 渐进式加载           :e8, after e3, 3d
+    E9 元 Skill             :e9, after e5, 2d
     section P2 高级特性
-    多 Agent 隔离             :p2a, after p1c, 3d
-    LRU 淘汰策略              :p2b, after p2a, 2d
-    Description 质量评估      :p2c, after p2b, 2d
+    E10 多 Agent 隔离       :e10, after e7, 3d
+    E11 LRU 淘汰            :e11, after e8, 2d
+    E12 Description 评估    :e12, after e2, 2d
     section P3 生态完善
-    Skill 膨胀检测            :p3a, after p2c, 2d
-    CLI 工具                  :p3b, after p3a, 5d
-    社区 skill 模板           :p3c, after p3b, 3d
+    E13 生态完善            :e13, after e9, 5d
 ```
-
-### 2.2 详细任务清单
-
-#### P0 核心基础（Week 1）
-
-| ID | 任务 | 优先级 | 依赖 | 产出 |
-|----|------|--------|------|------|
-| P0-1 | state.json 结构实现 | HIGH | - | `state.json` + 读写函数 |
-| P0-2 | config.json 结构实现 | HIGH | - | `config.json` + 读写函数 |
-| P0-3 | 原子 skill 7 项 lint 规则 | HIGH | P0-1 | `quality/lint-atomic.py` |
-| P0-4 | skill-manager 元 skill | HIGH | P0-1, P0-3 | `skills/meta/skill-manager/` |
-| P0-5 | init 命令实现 | HIGH | P0-1, P0-2 | 初始化流程 |
-
-#### P1 扩展功能（Week 2-3）
-
-| ID | 任务 | 优先级 | 依赖 | 产出 |
-|----|------|--------|------|------|
-| P1-1 | 工作流 skill 4 项 lint | HIGH | P0-3 | `quality/lint-workflow.py` |
-| P1-2 | mount/unmount 命令 | HIGH | P0-1 | 挂载/卸载流程 |
-| P1-3 | classify 命令 | MEDIUM | P0-1 | 分类流程 |
-| P1-4 | 渐进式加载实现 | MEDIUM | P0-1 | 加载器 |
-| P1-5 | Agent 适配框架 | MEDIUM | P0-1 | 适配器接口 |
-| P1-6 | Claude Code 适配器 | MEDIUM | P1-5 | `adapters/claude-code.py` |
-
-#### P2 高级特性（Week 4-5）
-
-| ID | 任务 | 优先级 | 依赖 | 产出 |
-|----|------|--------|------|------|
-| P2-1 | 多 Agent 隔离 | MEDIUM | P1-5 | 隔离机制 |
-| P2-2 | LRU 淘汰策略 | MEDIUM | P1-4 | 淘汰器 |
-| P2-3 | Description 质量评估 | LOW | P0-3 | 评估器 |
-| P2-4 | Hermes 适配器 | LOW | P1-5 | `adapters/hermes.py` |
-
-#### P3 生态完善（Week 6+）
-
-| ID | 任务 | 优先级 | 依赖 | 产出 |
-|----|------|--------|------|------|
-| P3-1 | Skill 膨胀检测 | LOW | P0-3 | 检测器 |
-| P3-2 | CLI 工具 | LOW | P0-P2 | `cli.py` |
-| P3-3 | 社区 skill 模板 | LOW | P0-4 | `templates/` |
 
 ---
 

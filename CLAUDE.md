@@ -1,12 +1,51 @@
 # CLAUDE.md
 
-> 版本：1.2.0 | 更新：2026-05-22
+> 版本：1.3.0 | 更新：2026-05-22
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
 ## 项目定位
 
 Agent Skill Library — 跨项目的 skill 管理系统。元 skill 管理其他 skill 的全生命周期。详细需求见 `PRD.md`。
+
+## 文档体系
+
+| 文档 | 用途 | 更新时机 |
+|------|------|----------|
+| `PRD.md` | 产品需求（What + Why） | 需求变更时 |
+| `IMPLEMENTATION.md` | 实现技术（How） | 架构/模块设计变更时 |
+| `PROGRESS.md` | 开发进度（Status） | 每个 Story 状态变更时 |
+| `CLAUDE.md` | 开发规则（Rules） | 规则变更时 |
+| `docs-alignment.json` | 文档对齐状态 | 版本变更时 |
+
+## 开发流程
+
+### Epic / Story 结构
+
+实现按 Epic → Story 两级拆分：
+- **Epic**：一个实现主题，包含多个原子化 Story
+- **Story**：最小可交付单元，有明确验收标准
+
+### Story 状态机
+
+```
+pending → in_progress → testing → done
+                ↓
+            blocked（依赖未满足）
+```
+
+**状态变更规则**：
+- `pending → in_progress`：开始开发
+- `in_progress → testing`：开发完成，提交测试
+- `testing → done`：测试通过，验收完成
+- `in_progress → blocked`：依赖未满足或有问题
+- `blocked → pending`：问题解决，重新排队
+
+### 进度跟踪
+
+- 每个 Story 状态变更时，更新 `PROGRESS.md`
+- 测试门禁写在各 Epic 下方，作为验收条件
+- 阻塞问题记录在进度日志中
 
 ## Skill 格式规范
 
