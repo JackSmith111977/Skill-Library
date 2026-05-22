@@ -35,7 +35,7 @@ stateDiagram-v2
 | E4 | 状态机引擎 | 8 | `done` | [EPIC.md](epics/E4-state-machine/EPIC.md) |
 | E5 | 工作流 Skill 支持 | 5 | `done` | [EPIC.md](epics/E5-workflow-support/EPIC.md) |
 | E6 | Skill 模板系统 | 4 | `done` | [EPIC.md](epics/E6-template-system/EPIC.md) |
-| E7 | Agent 适配框架 | 7 | `pending` | [EPIC.md](epics/E7-agent-adapter/EPIC.md) |
+| E7 | Agent 适配框架 | 7 | `done` | [EPIC.md](epics/E7-agent-adapter/EPIC.md) |
 | E8 | 渐进式加载 | 6 | `pending` | [EPIC.md](epics/E8-progressive-loading/EPIC.md) |
 | E9 | Skill Manager 元 Skill | 4 | `pending` | [EPIC.md](epics/E9-meta-skill/EPIC.md) |
 | E10 | 多 Agent 隔离 | 4 | `pending` | [EPIC.md](epics/E10-multi-agent/EPIC.md) |
@@ -115,3 +115,5 @@ graph TD
 | 2026-05-22 | E5 | - | Epic 完成 | 5 个 Story 全部完成，15 个测试通过 |
 | 2026-05-22 | E6 | E6-S1~S4 | pending → done | 模板系统完成，14 个测试通过 |
 | 2026-05-22 | E6 | - | Epic 完成 | 4 个 Story 全部完成，14 个测试通过 |
+| 2026-05-22 | E7 | E7-S1~S7 | pending → done | Agent 适配框架完成，26 个测试通过 |
+| 2026-05-22 | E7 | - | Epic 完成 | 7 个 Story 全部完成，26 个测试通过 |

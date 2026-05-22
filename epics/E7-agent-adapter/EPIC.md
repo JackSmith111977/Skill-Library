@@ -10,19 +10,19 @@
 | 优先级 | P1 |
 | Story 数 | 7 |
 | 依赖 | 无 |
-| 状态 | `pending` |
+| 状态 | `done` |
 
 ## Story 列表
 
 | ID | Story | 状态 | 依赖 |
 |----|-------|------|------|
-| E7-S1 | AgentAdapter 抽象基类 | `pending` | - |
-| E7-S2 | 通用 SKILL.md 适配器 | `pending` | E7-S1 |
-| E7-S3 | Claude Code 扩展字段处理 | `pending` | E7-S1 |
-| E7-S4 | Claude Code 动态注入处理 | `pending` | E7-S3 |
-| E7-S5 | Claude Code 参数占位符处理 | `pending` | E7-S3 |
-| E7-S6 | Agent 版本降级逻辑 | `pending` | E7-S1 |
-| E7-S7 | 适配器注册表 | `pending` | E7-S1 |
+| E7-S1 | AgentAdapter 抽象基类 | `done` | - |
+| E7-S2 | 通用 SKILL.md 适配器 | `done` | E7-S1 |
+| E7-S3 | Claude Code 扩展字段处理 | `done` | E7-S1 |
+| E7-S4 | Claude Code 动态注入处理 | `done` | E7-S3 |
+| E7-S5 | Claude Code 参数占位符处理 | `done` | E7-S3 |
+| E7-S6 | Agent 版本降级逻辑 | `done` | E7-S1 |
+| E7-S7 | 适配器注册表 | `done` | E7-S1 |
 
 ## 测试门禁
 
