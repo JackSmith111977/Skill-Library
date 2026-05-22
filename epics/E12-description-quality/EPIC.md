@@ -10,16 +10,16 @@
 | 优先级 | P2 |
 | Story 数 | 4 |
 | 依赖 | E2 |
-| 状态 | `pending` |
+| 状态 | `done` |
 
 ## Story 列表
 
 | ID | Story | 状态 | 依赖 |
 |----|-------|------|------|
-| E12-S1 | 触发词提取器 | `pending` | E2-S2 |
-| E12-S2 | 覆盖率评估 | `pending` | E12-S1 |
-| E12-S3 | 第三人称检测 | `pending` | E2-S2 |
-| E12-S4 | Description 优化建议 | `pending` | E12-S2 |
+| E12-S1 | 触发词提取器 | `done` | E2-S2 |
+| E12-S2 | 覆盖率评估 | `done` | E12-S1 |
+| E12-S3 | 第三人称检测 | `done` | E2-S2 |
+| E12-S4 | Description 优化建议 | `done` | E12-S2 |
 
 ## 测试门禁
 

@@ -40,7 +40,7 @@ stateDiagram-v2
 | E9 | Skill Manager 元 Skill | 4 | `done` | [EPIC.md](epics/E9-meta-skill/EPIC.md) |
 | E10 | 多 Agent 隔离 | 4 | `done` | [EPIC.md](epics/E10-multi-agent/EPIC.md) |
 | E11 | LRU 淘汰策略 | 4 | `done` | [EPIC.md](epics/E11-lru-eviction/EPIC.md) |
-| E12 | Description 质量评估 | 4 | `pending` | [EPIC.md](epics/E12-description-quality/EPIC.md) |
+| E12 | Description 质量评估 | 4 | `done` | [EPIC.md](epics/E12-description-quality/EPIC.md) |
 | E13 | 生态完善 | 4 | `pending` | [EPIC.md](epics/E13-ecosystem/EPIC.md) |
 
 **总计**：13 个 Epic，69 个 Story
@@ -139,3 +139,8 @@ graph TD
 | 2026-05-22 | E11 | E11-S3 | pending → done | last-used 时间戳更新（load/get 自动更新） |
 | 2026-05-22 | E11 | E11-S4 | pending → done | 淘汰事件日志（events/get_events/clear_events） |
 | 2026-05-22 | E11 | - | Epic 完成 | 4 个 Story 全部完成，15 个测试，315 总测试通过 |
+| 2026-05-22 | E12 | E12-S1 | pending → done | 触发词提取器（引号内触发短语提取） |
+| 2026-05-22 | E12 | E12-S2 | pending → done | 覆盖率评估（0-100 评分，MIN=3 IDEAL=6） |
+| 2026-05-22 | E12 | E12-S3 | pending → done | 第三人称检测（开头 + 动词） |
+| 2026-05-22 | E12 | E12-S4 | pending → done | Description 优化建议生成器 |
+| 2026-05-22 | E12 | - | Epic 完成 | 4 个 Story 全部完成，22 个测试，337 总测试通过 |
