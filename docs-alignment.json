@@ -19,6 +19,12 @@
       "updated": "2026-05-22",
       "status": "aligned",
       "role": "调研文档（分类体系+质量标准）"
+    },
+    "research/claude-code-skill-format.md": {
+      "version": "1.1.0",
+      "updated": "2026-05-22",
+      "status": "aligned",
+      "role": "调研文档（Claude Code Skill 格式规范）"
     }
   },
   "alignment-rules": {
