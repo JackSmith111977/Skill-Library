@@ -1,5 +1,5 @@
 {
-  "project-version": "2.0.0",
+  "project-version": "2.1.0",
   "last-alignment": "2026-05-23",
   "documents": {
     "CLAUDE.md": {
@@ -9,22 +9,22 @@
       "role": "开发规则（Skill 即接口设计哲学 + 提交前检查清单）"
     },
     "PRD.md": {
+      "version": "1.8.0",
+      "updated": "2026-05-23",
+      "status": "aligned",
+      "role": "产品需求文档（追加 §13 CI/CD、§14 技能包版本化）"
+    },
+    "IMPLEMENTATION.md": {
       "version": "1.7.0",
       "updated": "2026-05-23",
       "status": "aligned",
-      "role": "产品需求文档（Skill 即接口 + 用户文档规范 + 无 CLI）"
-    },
-    "IMPLEMENTATION.md": {
-      "version": "1.6.0",
-      "updated": "2026-05-23",
-      "status": "aligned",
-      "role": "实现技术文档（纯 Skill 架构，无 CLI）"
+      "role": "实现技术文档（追加 §9 CI/CD 与版本管理）"
     },
     "PROGRESS.md": {
-      "version": "1.3.0",
+      "version": "1.4.0",
       "updated": "2026-05-23",
       "status": "aligned",
-      "role": "开发进度索引（17 个 Epic，84 个 Story）"
+      "role": "开发进度索引（19 个 Epic，102 个 Story）"
     },
     "research/skill-classification-and-quality.md": {
       "version": "1.0.0",
@@ -43,6 +43,12 @@
       "updated": "2026-05-23",
       "status": "aligned",
       "role": "调研文档（skill-creator 元技能模式调研）"
+    },
+    "research/ci-cd-and-version-management.md": {
+      "version": "1.0.0",
+      "updated": "2026-05-23",
+      "status": "aligned",
+      "role": "调研文档（CI/CD + 版本管理方案调研）"
     },
     "README.md": {
       "version": "1.2.0",

@@ -1,5 +1,6 @@
 """Skill 注册/注销/查询"""
 
+import json
 from pathlib import Path
 from typing import Any
 
@@ -117,11 +118,22 @@ class SkillIndexer:
         }
 
     def _build_entry(self, skill_path: Path, meta: dict[str, Any]) -> dict[str, Any]:
-        """从解析结果构建 state.json 中的 skill entry"""
+        """从解析结果构建 state.json 中的 skill entry
+
+        从目录结构推断 pack 名（skills/<pack>/<skill>/），
+        并读取 pack.json 获取 pack-version。
+        """
         md = meta.get("metadata", {})
+
+        # 从路径推断 pack 名
+        pack = self._resolve_pack(skill_path)
+        pack_version = self._read_pack_version(skill_path, pack)
+
         return {
             "name": meta["name"],
             "path": str(skill_path),
+            "pack": pack,
+            "pack-version": pack_version,
             "version": meta.get("version", "0.0.0"),
             "type": md.get("skill-type", "atomic"),
             "design-pattern": md.get("design-pattern", "tool-wrapper"),
@@ -131,3 +143,28 @@ class SkillIndexer:
             "description": meta.get("description", ""),
             "allowed-tools": meta.get("allowed-tools", []),
         }
+
+    @staticmethod
+    def _resolve_pack(skill_path: Path) -> str:
+        """从路径推断 pack 名：skills/<pack>/<skill>/"""
+        parts = skill_path.parts
+        try:
+            skills_idx = parts.index("skills")
+            if len(parts) > skills_idx + 1:
+                return parts[skills_idx + 1]
+        except ValueError:
+            pass
+        return "unknown"
+
+    @staticmethod
+    def _read_pack_version(skill_path: Path, pack: str) -> str:
+        """读取 pack.json 中的版本号"""
+        pack_json = skill_path.parent / "pack.json"
+        if pack_json.is_file():
+            try:
+                with open(pack_json, encoding="utf-8") as f:
+                    data = json.load(f)
+                return data.get("version", "0.0.0")
+            except (json.JSONDecodeError, OSError):
+                pass
+        return "0.0.0"

@@ -1,0 +1,8 @@
+{
+  "name": "web",
+  "version": "0.1.0",
+  "description": "联网搜索、网页抓取、信息聚合相关 skill",
+  "skills": [],
+  "dependencies": [],
+  "updated": "2026-05-23"
+}

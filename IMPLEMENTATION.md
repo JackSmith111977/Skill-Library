@@ -1,6 +1,6 @@
 # Skill Library 实现技术文档
 
-> 版本：1.6.0 | 更新：2026-05-23 | 对齐：PRD v1.7.0
+> 版本：1.7.0 | 更新：2026-05-23 | 对齐：PRD v1.8.0
 
 ## 0. 文档索引
 
@@ -724,7 +724,183 @@ AI Agent 通过加载 skill-manager/ skill-creator/ workflow-creator 的 SKILL.m
 
 ---
 
-## 9. 参考来源
+## 9. CI/CD 与版本管理
+
+### 9.1 持续集成（CI）
+
+CI 流程通过 GitHub Actions 实现，配置文件 `.github/workflows/ci.yml`：
+
+```yaml
+# .github/workflows/ci.yml
+name: CI
+on: [push, pull_request]
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ["3.11", "3.12"]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+      - name: Install dependencies
+        run: |
+          pip install -e ".[dev]"
+      - name: Run tests
+        run: pytest tests/ -q --tb=short
+      - name: Run lint
+        run: python -m skill_library.quality.lint skills/*
+```
+
+**门禁条件**：
+- 所有测试通过（全 Python 版本矩阵）
+- Lint score >= 90（所有 skill 包）
+
+### 9.2 版本管理
+
+使用 `bump-my-version` 统一管理版本号，配置文件 `.bumpversion.toml`：
+
+```toml
+[tool.bumpversion]
+current_version = "0.1.0"
+parse = "(?P<major>\\d+)\\.(?P<minor>\\d+)\\.(?P<patch>\\d+)"
+serialize = ["{major}.{minor}.{patch}"]
+allow_dirty = false
+
+[[tool.bumpversion.files]]
+filename = "pyproject.toml"
+
+[[tool.bumpversion.files]]
+filename = "src/skill_library/__init__.py"
+
+[[tool.bumpversion.files]]
+filename = "docs-alignment.json"
+```
+
+版本变更流程：
+
+```mermaid
+flowchart LR
+    A[Epic 完成 / Bugfix] --> B[bump-my-version bump]
+    B --> C[Auto-update version files]
+    C --> D[git commit + git tag]
+    D --> E[git push --tags]
+    E --> F[GitHub Actions Release]
+```
+
+### 9.3 自动 Release
+
+当 `v*` tag 被推送时触发 Release 工作流 `.github/workflows/release.yml`：
+
+```yaml
+# .github/workflows/release.yml
+name: Release
+on:
+  push:
+    tags:
+      - "v*"
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Build package
+        run: |
+          pip install build
+          python -m build
+      - name: Create Release
+        uses: softprops/action-gh-release@v2
+        with:
+          generate_release_notes: true
+          files: dist/*
+```
+
+### 9.4 技能包版本管理
+
+每个 pack 独立版本化，通过 `skills/<pack>/pack.json` 声明：
+
+| 包 | pack.json 路径 | skill 数 |
+|----|---------------|----------|
+| meta | `skills/meta/pack.json` | 3 |
+| retrieval | `skills/retrieval/pack.json` | 0 |
+| web | `skills/web/pack.json` | 0 |
+| document | `skills/document/pack.json` | 0 |
+| development | `skills/development/pack.json` | 0 |
+| devops | `skills/devops/pack.json` | 0 |
+| communication | `skills/communication/pack.json` | 0 |
+| learning | `skills/learning/pack.json` | 0 |
+| security | `skills/security/pack.json` | 0 |
+| data | `skills/data/pack.json` | 0 |
+
+pack.json Schema：
+
+```json
+{
+  "name": "pack-name",
+  "version": "semver",
+  "description": "简短描述",
+  "skills": ["skill-list"],
+  "dependencies": ["other-packs"],
+  "updated": "ISO-8601"
+}
+```
+
+**与 state.json 集成**：
+
+state.json 的 `skills.{name}` 段增加 `pack-version` 字段，记录 skill 所属包的版本：
+
+```json
+{
+  "skills": {
+    "skill-manager": {
+      "pack": "meta",
+      "pack-version": "1.0.0",
+      "type": "atomic",
+      "version": "1.0.0",
+      ...
+    }
+  }
+}
+```
+
+### 9.5 升级渠道
+
+两套升级路径：
+
+**路径一：升级脚本（human-first）**
+
+`scripts/upgrade.sh`：
+```bash
+#!/bin/bash
+# 检查最新版本
+latest=$(curl -s https://api.github.com/repos/user/skill-library/releases/latest | grep tag_name | cut -d'"' -f4)
+current=$(git describe --tags)
+if [ "$latest" != "$current" ]; then
+  echo "Upgrade available: $current → $latest"
+  git pull origin main
+  pip install -r requirements.txt
+fi
+```
+
+`scripts/upgrade.ps1`（等效 PowerShell 版本）。
+
+**路径二：skill-manager 升级工作流（agent-first）**
+
+skill-manager SKILL.md 中增加升级工作流，指导 AI Agent 执行：
+1. 读取本地 `git describe --tags` 获取当前版本
+2. 通过 GitHub API 查询最新 Release 版本
+3. 版本对比，有更新时执行 `git pull` + `pip install -r requirements.txt`
+
+---
+
+## 10. 参考来源
 
 | 来源 | 说明 | 可信度 |
 |------|------|--------|

@@ -1,0 +1,8 @@
+{
+  "name": "document",
+  "version": "0.1.0",
+  "description": "文档读写、格式转换、内容生成相关 skill",
+  "skills": [],
+  "dependencies": [],
+  "updated": "2026-05-23"
+}

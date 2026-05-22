@@ -1,6 +1,6 @@
 # Skill Library 开发进度
 
-> 版本：1.3.0 | 更新：2026-05-23
+> 版本：1.4.0 | 更新：2026-05-23
 
 ## 状态定义
 
@@ -46,8 +46,10 @@ stateDiagram-v2
 | E15 | skill-manager 元 Skill 重写 | 5 | `done` | [EPIC.md](epics/E15-skill-manager-rewrite/EPIC.md) |
 | E16 | 用户文档体系完善 | 3 | `done` | [EPIC.md](epics/E16-readme-rewrite/EPIC.md) |
 | E17 | CLI 层完全移除 | 5 | `done` | [EPIC.md](epics/E17-cli-removal/EPIC.md) |
+| E18 | CI/CD + 版本管理 + 升级渠道 | 9 | `done` | [EPIC.md](epics/E18-ci-cd-version/EPIC.md) |
+| E19 | 技能包官方版本化（骨架） | 9 | `done` | [EPIC.md](epics/E19-pack-versioning/EPIC.md) |
 
-**总计**：17 个 Epic，84 个 Story
+**总计**：19 个 Epic，102 个 Story
 
 ## 文件结构
 
@@ -183,3 +185,19 @@ graph TD
 | 2026-05-23 | E17 | E17-S4 | `pending` → `done` | README + skill-manager SKILL.md + cli-examples.md 清除 CLI |
 | 2026-05-23 | E17 | E17-S5 | `pending` → `done` | 最终验证通过，333 测试，无回归 |
 | 2026-05-23 | E17 | - | Epic 完成 | 5 个 Story 全部完成，项目版本 2.0.0，纯 Skill 架构 |
+| 2026-05-23 | E18 | - | `pending` → `in_progress` | Epic 创建，开始 E18-S1 PRD 更新 |
+| 2026-05-23 | E18 | E18-S1 | `pending` → `done` | PRD 新增 §13 CI/CD、§14 技能包版本化，v1.7.0→v1.8.0 |
+| 2026-05-23 | E18 | E18-S2 | `pending` → `done` | 调研文档 research/ci-cd-and-version-management.md |
+| 2026-05-23 | E18 | E18-S3 | `pending` → `done` | IMPLEMENTATION.md 新增 §9 CI/CD 架构，v1.6.0→v1.7.0 |
+| 2026-05-23 | E18 | E18-S4 | `pending` → `done` | .bumpversion.toml 配置 + pyproject.toml 依赖更新 |
+| 2026-05-23 | E18 | E18-S5 | `pending` → `done` | .github/workflows/ci.yml CI 工作流 |
+| 2026-05-23 | E18 | E18-S6 | `pending` → `done` | .github/workflows/release.yml Release 工作流 |
+| 2026-05-23 | E18 | E18-S7 | `pending` → `done` | scripts/upgrade.sh + scripts/upgrade.ps1 升级脚本 |
+| 2026-05-23 | E18 | E18-S8 | `pending` → `done` | skill-manager SKILL.md 新增升级工作流 |
+| 2026-05-23 | E18 | - | Epic 完成 | 9 个 Story 全部完成，334 测试通过，无回归 |
+| 2026-05-23 | E19 | - | `pending` → `in_progress` | Epic 创建（骨架限定），开始 E19-S4 pack Schema |
+| 2026-05-23 | E19 | E19-S4~S5 | `pending` → `done` | pack.json Schema 定义 + 10 个包目录 + 空 refs/assets 骨架 |
+| 2026-05-23 | E19 | E19-S6 | `pending` → `done` | indexer.py 扩展 pack-version 字段；scanner.py 支持两层结构 |
+| 2026-05-23 | E19 | E19-S7 | `pending` → `done` | skill-manager 新增 Pack Operations 章节 |
+| 2026-05-23 | E19 | E19-S8 | `pending` → `done` | release.yml 新增 pack version 报告步骤 |
+| 2026-05-23 | E19 | - | Epic 完成 | 5 个 Story 完成（骨架），334 测试通过，无回归 |

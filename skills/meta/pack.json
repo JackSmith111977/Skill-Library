@@ -1,0 +1,8 @@
+{
+  "name": "meta",
+  "version": "1.0.0",
+  "description": "元技能包 — 管理其他 skill 的全生命周期：创建、注册、安装/卸载、质量检测",
+  "skills": ["skill-manager", "skill-creator", "workflow-creator"],
+  "dependencies": [],
+  "updated": "2026-05-23"
+}

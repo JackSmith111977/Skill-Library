@@ -142,3 +142,60 @@ class QualityEngine:
         """解析 YAML frontmatter 和 body。复用 registry.parser 的 yaml.safe_load 实现。"""
         from ..registry.parser import _split_frontmatter
         return _split_frontmatter(content)
+
+
+def main():
+    """CLI 入口：python -m skill_library.quality.lint <path>...
+
+    对给定路径执行 lint 检测。支持：
+    - 单个 skill 路径
+    - 包含 skill 的根目录（自动扫描）
+    """
+    import sys
+    from ..registry.scanner import scan_skills
+
+    engine = QualityEngine()
+    all_passed = True
+
+    if len(sys.argv) < 2:
+        print("Usage: python -m skill_library.quality.lint <path> [...]")
+        print("  <path>  skill 目录路径或包含 skill 的根目录")
+        sys.exit(1)
+
+    for arg in sys.argv[1:]:
+        path = Path(arg)
+        if not path.exists():
+            print(f"路径不存在: {path}")
+            all_passed = False
+            continue
+
+        if path.is_dir() and (path / "SKILL.md").is_file():
+            skills = [path]
+        elif path.is_dir():
+            skills = scan_skills(path)
+        else:
+            print(f"无效路径: {path}")
+            all_passed = False
+            continue
+
+        if not skills:
+            print(f"未找到 skill: {path}")
+            all_passed = False
+            continue
+
+        for skill_path in skills:
+            result = engine.lint_atomic(skill_path)
+            status = "PASS" if result.passed else "FAIL"
+            print(f"[{status}] {skill_path.name}: score={result.score}")
+            for e in result.errors:
+                print(f"  ERROR: [{e.rule}] {e.message}")
+            for w in result.warnings:
+                print(f"  WARN:  [{w.rule}] {w.message}")
+            if not result.passed:
+                all_passed = False
+
+    sys.exit(0 if all_passed else 1)
+
+
+if __name__ == "__main__":
+    main()

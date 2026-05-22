@@ -54,17 +54,27 @@ class TestScanSkills:
         """不存在的目录返回空列表"""
         assert scan_skills("/nonexistent/path") == []
 
-    def test_scan_nested_not_recursive(self, tmp_path):
-        """只扫描一层，不递归"""
+    def test_scan_nested_two_levels(self, tmp_path):
+        """扫描两层：skills/<pack>/<skill>/"""
         parent = tmp_path / "parent"
         parent.mkdir()
         child = parent / "child"
         child.mkdir()
         (child / "SKILL.md").write_text("---\nname: child\n---\n")
-        # root 下没有直接的 SKILL.md（child 在第二层）
-        assert scan_skills(tmp_path) == []
-        # parent 下 child 是直接子目录，能找到
+        # 两层深度也能找到
+        results = scan_skills(tmp_path)
+        assert len(results) == 1
+        assert results[0] == child
+        # parent 下 child 是直接子目录，也能找到
         assert len(scan_skills(parent)) == 1
+
+    def test_scan_skip_empty_pack_dir(self, tmp_path):
+        """没有 SKILL.md 的包目录不被当作 skill"""
+        pack = tmp_path / "pack"
+        pack.mkdir()
+        (pack / "README.md").write_text("pack readme")
+        # 包目录下没有 SKILL.md，不返回
+        assert scan_skills(tmp_path) == []
 
     def test_scan_sorted(self, tmp_path):
         """结果按名称排序"""

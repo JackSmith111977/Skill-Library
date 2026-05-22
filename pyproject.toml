@@ -1,10 +1,10 @@
 [build-system]
 requires = ["setuptools>=68.0", "wheel"]
-build-backend = "setuptools.backends._legacy:_Backend"
+build-backend = "setuptools.build_meta"
 
 [project]
 name = "skill-library"
-version = "0.1.0"
+version = "2.1.0"
 description = "跨项目的 agent skill 管理系统"
 requires-python = ">=3.11"
 dependencies = [
@@ -16,6 +16,7 @@ dependencies = [
 [project.optional-dependencies]
 dev = [
     "pytest>=7.0",
+    "bump-my-version>=0.20.0",
 ]
 
 [tool.setuptools.packages.find]
