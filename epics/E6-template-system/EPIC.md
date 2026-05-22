@@ -10,16 +10,16 @@
 | 优先级 | P1 |
 | Story 数 | 4 |
 | 依赖 | 无 |
-| 状态 | `pending` |
+| 状态 | `done` |
 
 ## Story 列表
 
 | ID | Story | 状态 | 依赖 |
 |----|-------|------|------|
-| E6-S1 | 原子 skill 模板 | `pending` | - |
-| E6-S2 | 工作流 skill 模板 | `pending` | - |
-| E6-S3 | create 命令 | `pending` | E6-S1, E6-S2 |
-| E6-S4 | 模板参数填充 | `pending` | E6-S3 |
+| E6-S1 | 原子 skill 模板 | `done` | - |
+| E6-S2 | 工作流 skill 模板 | `done` | - |
+| E6-S3 | create 命令 | `done` | E6-S1, E6-S2 |
+| E6-S4 | 模板参数填充 | `done` | E6-S3 |
 
 ## 测试门禁
 

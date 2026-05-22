@@ -13,7 +13,9 @@ def cli():
 # 延迟注册子命令，避免循环导入
 def _register_commands():
     from .lint_cmd import lint
+    from .create_cmd import create
     cli.add_command(lint)
+    cli.add_command(create)
 
 
 _register_commands()
