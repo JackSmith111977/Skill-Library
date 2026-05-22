@@ -10,18 +10,18 @@
 | 优先级 | P0 |
 | Story 数 | 6 |
 | 依赖 | E1 |
-| 状态 | `pending` |
+| 状态 | `done` |
 
 ## Story 列表
 
 | ID | Story | 状态 | 依赖 |
 |----|-------|------|------|
-| E3-S1 | 目录扫描器 | `pending` | E1-S1 |
-| E3-S2 | frontmatter 解析器 | `pending` | - |
-| E3-S3 | skill 注册函数 | `pending` | E3-S1, E3-S2 |
-| E3-S4 | skill 注销函数 | `pending` | E1-S3 |
-| E3-S5 | skill 查询接口 | `pending` | E1-S3 |
-| E3-S6 | 二维分类标记 | `pending` | E3-S3 |
+| E3-S1 | 目录扫描器 | `done` | E1-S1 |
+| E3-S2 | frontmatter 解析器 | `done` | - |
+| E3-S3 | skill 注册函数 | `done` | E3-S1, E3-S2 |
+| E3-S4 | skill 注销函数 | `done` | E1-S3 |
+| E3-S5 | skill 查询接口 | `done` | E1-S3 |
+| E3-S6 | 二维分类标记 | `done` | E3-S3 |
 
 ## 测试门禁
 
