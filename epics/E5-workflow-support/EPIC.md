@@ -10,17 +10,17 @@
 | 优先级 | P1 |
 | Story 数 | 5 |
 | 依赖 | E2, E3 |
-| 状态 | `pending` |
+| 状态 | `done` |
 
 ## Story 列表
 
 | ID | Story | 状态 | 依赖 |
 |----|-------|------|------|
-| E5-S1 | 引用原子 skill 存在性校验 | `pending` | E3-S1 |
-| E5-S2 | 编排步骤完整性校验 | `pending` | - |
-| E5-S3 | 硬性门控标记校验 | `pending` | - |
-| E5-S4 | 步骤依赖关系校验 | `pending` | - |
-| E5-S5 | 工作流 lint 入口 | `pending` | E5-S1~S4, E2-S7 |
+| E5-S1 | 引用原子 skill 存在性校验 | `done` | E3-S1 |
+| E5-S2 | 编排步骤完整性校验 | `done` | - |
+| E5-S3 | 硬性门控标记校验 | `done` | - |
+| E5-S4 | 步骤依赖关系校验 | `done` | - |
+| E5-S5 | 工作流 lint 入口 | `done` | E5-S1~S4, E2-S7 |
 
 ## 测试门禁
 

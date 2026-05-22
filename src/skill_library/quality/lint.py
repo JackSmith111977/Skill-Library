@@ -9,6 +9,10 @@ from .rules.body_length import check_body_length
 from .rules.references import check_references
 from .rules.allowed_tools import check_allowed_tools
 from .rules.metadata import check_metadata
+from .rules.workflow_refs import check_workflow_refs
+from .rules.workflow_steps import check_steps_complete
+from .rules.workflow_gates import check_gate_markers
+from .rules.workflow_deps import check_step_deps
 
 
 class QualityEngine:
@@ -61,6 +65,54 @@ class QualityEngine:
         # Rule 7: metadata
         meta_warnings = check_metadata(frontmatter.get("metadata"))
         warnings.extend(meta_warnings)
+
+        # 计算分数
+        score = max(0, 100 - len(errors) * 10 - len(warnings) * 2)
+        passed = len(errors) == 0
+
+        return LintResult(
+            passed=passed,
+            errors=errors,
+            warnings=warnings,
+            score=score,
+        )
+
+    def lint_workflow(self, skill_path: str | Path, skills_root: str | Path | None = None) -> LintResult:
+        """工作流 skill 检测（7 项基础 + 4 项工作流）"""
+        skill_path = Path(skill_path)
+        errors: list[LintError] = []
+        warnings: list[LintWarning] = []
+
+        # 读取 SKILL.md
+        skill_md = skill_path / "SKILL.md"
+        if not skill_md.exists():
+            return LintResult(
+                passed=False,
+                errors=[LintError(rule="file", message=f"SKILL.md 不存在: {skill_md}")],
+                score=0,
+            )
+
+        content = skill_md.read_text(encoding="utf-8")
+        frontmatter, body = self._parse_frontmatter(content)
+
+        # 基础 7 项规则
+        errors.extend(check_name_format(frontmatter.get("name", ""), skill_path.name))
+        desc_errors, desc_warnings = check_description(frontmatter.get("description", ""))
+        errors.extend(desc_errors)
+        warnings.extend(desc_warnings)
+        warnings.extend(check_body_length(body))
+        errors.extend(check_references(skill_path, body))
+        errors.extend(check_allowed_tools(frontmatter.get("allowed-tools")))
+        warnings.extend(check_metadata(frontmatter.get("metadata")))
+
+        # 工作流 4 项规则
+        metadata = frontmatter.get("metadata", {})
+        design_pattern = metadata.get("design-pattern", "") if isinstance(metadata, dict) else ""
+
+        errors.extend(check_workflow_refs(skill_path, body, skills_root and Path(skills_root)))
+        errors.extend(check_steps_complete(body))
+        warnings.extend(check_gate_markers(body, design_pattern))
+        errors.extend(check_step_deps(body))
 
         # 计算分数
         score = max(0, 100 - len(errors) * 10 - len(warnings) * 2)
