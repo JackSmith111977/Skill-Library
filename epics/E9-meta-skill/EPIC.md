@@ -10,16 +10,16 @@
 | 优先级 | P1 |
 | Story 数 | 4 |
 | 依赖 | E2, E4, E5, E6 |
-| 状态 | `pending` |
+| 状态 | `done` |
 
 ## Story 列表
 
 | ID | Story | 状态 | 依赖 |
 |----|-------|------|------|
-| E9-S1 | skill-manager SKILL.md | `pending` | E2-S8, E4-S7 |
-| E9-S2 | skill-manager references | `pending` | - |
-| E9-S3 | skill-manager scripts | `pending` | - |
-| E9-S4 | 元 skill 自管理验证 | `pending` | E9-S1 |
+| E9-S1 | skill-manager SKILL.md | `done` | E2-S8, E4-S7 |
+| E9-S2 | skill-manager references | `done` | - |
+| E9-S3 | skill-manager scripts | `done` | - |
+| E9-S4 | 元 skill 自管理验证 | `done` | E9-S1 |
 
 ## 测试门禁
 

@@ -37,7 +37,7 @@ stateDiagram-v2
 | E6 | Skill 模板系统 | 4 | `done` | [EPIC.md](epics/E6-template-system/EPIC.md) |
 | E7 | Agent 适配框架 | 7 | `done` | [EPIC.md](epics/E7-agent-adapter/EPIC.md) |
 | E8 | 渐进式加载 | 6 | `done` | [EPIC.md](epics/E8-progressive-loading/EPIC.md) |
-| E9 | Skill Manager 元 Skill | 4 | `pending` | [EPIC.md](epics/E9-meta-skill/EPIC.md) |
+| E9 | Skill Manager 元 Skill | 4 | `done` | [EPIC.md](epics/E9-meta-skill/EPIC.md) |
 | E10 | 多 Agent 隔离 | 4 | `pending` | [EPIC.md](epics/E10-multi-agent/EPIC.md) |
 | E11 | LRU 淘汰策略 | 4 | `pending` | [EPIC.md](epics/E11-lru-eviction/EPIC.md) |
 | E12 | Description 质量评估 | 4 | `pending` | [EPIC.md](epics/E12-description-quality/EPIC.md) |
@@ -124,3 +124,8 @@ graph TD
 | 2026-05-22 | E8 | E8-S5 | pending → done | 加载生命周期管理，8 个测试通过 |
 | 2026-05-22 | E8 | E8-S6 | pending → done | load CLI 命令，23 个测试（全部 loader 测试） |
 | 2026-05-22 | E8 | - | Epic 完成 | 6 个 Story 全部完成，23 个测试通过 |
+| 2026-05-22 | E9 | E9-S1 | pending → done | skill-manager SKILL.md，lint score 100 |
+| 2026-05-22 | E9 | E9-S2 | pending → done | skill-manager references (cli-examples.md) |
+| 2026-05-22 | E9 | E9-S3 | pending → done | skill-manager scripts (scan-and-register.sh) |
+| 2026-05-22 | E9 | E9-S4 | pending → done | 元 skill 自管理验证通过（lint/mount/unmount） |
+| 2026-05-22 | E9 | - | Epic 完成 | 4 个 Story 全部完成，lint 解析修复，271 测试通过 |

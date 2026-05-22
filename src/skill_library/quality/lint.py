@@ -142,18 +142,41 @@ class QualityEngine:
             return {}, content
 
     def _simple_yaml_parse(self, yaml_content: str) -> dict:
-        """简单的 YAML 解析（仅支持基本键值对）"""
+        """简单的 YAML 解析（仅支持基本键值对 + > 多行）"""
         result = {}
-        for line in yaml_content.split("\n"):
-            line = line.strip()
-            if not line or line.startswith("#"):
+        fold_key = None  # 当前折叠块的 key
+        fold_lines = []  # 折叠块的行
+        fold_strip = False  # >- strip trailing newline
+
+        for raw_line in yaml_content.split("\n"):
+            stripped = raw_line.strip()
+            if fold_key:
+                # 折叠模式：缩进行属于值，非缩进行结束折叠
+                if raw_line and not raw_line[0].isspace() and not raw_line.startswith("---"):
+                    # 折叠结束，写入结果
+                    text = " ".join(fold_lines).strip()
+                    if fold_strip:
+                        text = text.rstrip("\n")
+                    result[fold_key] = text
+                    fold_key = None
+                    fold_lines = []
+                    # 本行作为新键处理（fall through）
+                else:
+                    if stripped and not stripped.startswith("#"):
+                        fold_lines.append(stripped)
+                    continue
+
+            if not stripped or stripped.startswith("#"):
                 continue
-            if ":" in line:
-                key, _, value = line.partition(":")
+            if ":" in stripped:
+                key, _, value = stripped.partition(":")
                 key = key.strip()
                 value = value.strip()
-                # 处理多行值
-                if value == ">":
+                # 处理 > 和 >- 多行值（进入折叠模式）
+                if value in (">", ">-"):
+                    fold_key = key
+                    fold_strip = value == ">-"
+                    fold_lines = []
                     continue
                 # 处理列表
                 if value.startswith("[") and value.endswith("]"):
@@ -168,4 +191,10 @@ class QualityEngine:
                 # 处理字符串
                 else:
                     result[key] = value.strip("'\"")
+        # 文件结束，刷新折叠块
+        if fold_key and fold_lines:
+            text = " ".join(fold_lines).strip()
+            if fold_strip:
+                text = text.rstrip("\n")
+            result[fold_key] = text
         return result
