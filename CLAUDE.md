@@ -1,6 +1,6 @@
 # CLAUDE.md
 
-> 版本：1.6.2 | 更新：2026-05-23
+> 版本：1.7.0 | 更新：2026-05-24
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
@@ -19,6 +19,7 @@ Agent Skill Library — 跨项目的 skill 管理系统。元 skill 管理其他
 | `epics/<Epic>/S*-*.md` | Story 详情 | Story 变更时 |
 | `CLAUDE.md` | 开发规则（Rules） | 规则变更时 |
 | `docs-alignment.json` | 文档对齐状态 | 版本变更时 |
+| `LESSONS.md` | 项目教训记录 | 新问题发现时 |
 
 ## 需求新增流程
 
@@ -140,8 +141,11 @@ pending → in_progress → testing → done
 □ 文档对齐：docs-alignment.json 版本号与 PRD/README/IMPLEMENTATION 实际版本一致
 □ 日期同步：docs-alignment.json 中所有文档 updated 日期 >= last-alignment
 □ 文档变更同步：改了什么文档，就在 docs-alignment.json 中同步更新其版本信息
+□ IMPLEMENTATION.md 同步：IMPLEMENTATION.md 与当前代码架构一致（如架构变更）
 □ Skill lint：改动了 skill 文件时运行 lint（python -m skill_library.quality.lint）
+□ pack.json 验证：所有 pack name/description 非模板字面量
 □ git status 确认：只包含预期文件，无遗漏
+□ LESSONS.md 检查：本次踩坑是否需记入教训？
 ```
 
 **核心原则**：`docs-alignment.json` 是提交门禁。任何文档变更必须同步更新其中的版本字段。如果提交前发现版本不同步，必须先对齐再提交。
@@ -214,6 +218,7 @@ metadata:                     # 可选，自定义扩展
 ```
 Skill Library/
 ├── CLAUDE.md                   # 本文件（开发规则）
+├── LESSONS.md                  # 项目教训记录
 ├── PRD.md                      # 产品需求文档
 ├── IMPLEMENTATION.md           # 实现技术文档
 ├── PROGRESS.md                 # 开发进度索引

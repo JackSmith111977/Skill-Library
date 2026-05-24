@@ -1,24 +1,24 @@
 {
-  "project-version": "2.1.0",
-  "last-alignment": "2026-05-23",
+  "project-version": "2.2.0",
+  "last-alignment": "2026-05-24",
   "documents": {
     "CLAUDE.md": {
-      "version": "1.6.2",
-      "updated": "2026-05-23",
+      "version": "1.7.0",
+      "updated": "2026-05-24",
       "status": "aligned",
-      "role": "开发规则（Skill 即接口设计哲学 + 提交前检查清单）"
+      "role": "开发规则（LESSONS.md 引用 + 提交前清单新增 3 项）"
     },
     "PRD.md": {
-      "version": "1.8.0",
-      "updated": "2026-05-23",
+      "version": "2.0.0",
+      "updated": "2026-05-24",
       "status": "aligned",
-      "role": "产品需求文档（追加 §13 CI/CD、§14 技能包版本化）"
+      "role": "产品需求文档（§2.5 Scope 全局/项目级 + §8 新 17 分类体系 + OpenCode 支持）"
     },
     "IMPLEMENTATION.md": {
       "version": "1.7.0",
       "updated": "2026-05-23",
-      "status": "aligned",
-      "role": "实现技术文档（追加 §9 CI/CD 与版本管理）"
+      "status": "needs-update",
+      "role": "实现技术文档（待更新：Scope 支持 + OpenCode 适配 + 新分类）"
     },
     "PROGRESS.md": {
       "version": "1.4.0",
@@ -36,7 +36,7 @@
       "version": "1.1.0",
       "updated": "2026-05-23",
       "status": "aligned",
-      "role": "调研文档（Claude Code Skill 格式规范）"
+      "role": "调研文档（Claude Code Skill 格式规范，已含 Scope 路径）"
     },
     "research/skill-creator-patterns.md": {
       "version": "1.0.0",

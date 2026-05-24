@@ -1,6 +1,6 @@
 # Skill Library 产品需求文档（PRD）
 
-> 版本：1.8.0 | 更新：2026-05-23
+> 版本：2.0.0 | 更新：2026-05-24
 
 ## 1. 项目概述
 
@@ -114,6 +114,7 @@ skill-name/
 |-------|----------|----------|
 | generic | 通用 SKILL.md 规范（6 个标准字段） | 首要实现 |
 | claude-code | Claude Code 扩展规范（+6 个扩展字段） | 已调研 ✅ |
+| opencode | OpenCode Agent（`.opencode/skills/`，兼容 `.claude/skills/`） | 已调研 ✅ |
 | hermes | Hermes Agent 格式 | 待调研 |
 | openclaw | OpenClaw 格式 | 待调研 |
 
@@ -136,6 +137,34 @@ skill-name/
 | 参数占位符 | `$ARGUMENTS`、`$0`、`$1` | 捕获 `/skill-name` 后的输入参数 |
 | 存放位置 | 4 级优先级 | 企业 > 个人 > 项目 > 插件 |
 
+### 2.5 Scope 机制：全局 vs 项目级
+
+Skill 安装到 agent 时有两个作用域：
+
+| Scope | 路径 | 生效范围 |
+|-------|------|----------|
+| `global` | 用户级 skill 目录 | 该用户所有项目 |
+| `project` | 项目级 skill 目录 | 仅当前项目 |
+
+**Claude Code 路径**：
+- Global: `~/.claude/skills/<name>/SKILL.md`
+- Project: `.claude/skills/<name>/SKILL.md`
+
+**OpenCode 路径**：
+- Global: `~/.config/opencode/skills/<name>/SKILL.md`（兼相容错 `~/.claude/skills/`）
+- Project: `.opencode/skills/<name>/SKILL.md`（兼相容错 `.claude/skills/`）
+
+**覆盖优先级**：
+```
+企业级 > 全局(global) > 项目级(project) > 插件级
+```
+同名 skill 高优先级覆盖低优先级。
+
+**状态机集成**：
+- 每个 agent 注册时声明 global-path 和 project-path
+- 每个 skill 挂载记录 scope 字段
+- mount 操作需指定 `--scope global|project`
+
 ---
 
 ## 3. 状态机
@@ -153,12 +182,16 @@ skill-name/
   },
   "agents": {
     "<agent-id>": {
-      "path": "C:\\Users\\...\\.claude\\skills",
       "agent-type": "claude-code",
+      "paths": {
+        "global": "C:\\Users\\...\\.claude\\skills",
+        "project": "D:\\Projects\\xxx\\.claude\\skills"
+      },
       "skill-packs": ["development", "retrieval"],
       "skills": {
         "<skill-name>": {
           "status": "mounted",
+          "scope": "global",
           "version": "1.0.0",
           "adapter": "claude-code",
           "load-mode": "session",
@@ -189,6 +222,7 @@ skill-name/
 | 维度 | 取值 | 说明 |
 |------|------|------|
 | 挂载状态 | `mounted` / `unmounted` / `error` / `outdated` | skill 在 agent 上的状态 |
+| 挂载作用域 | `global` / `project` | skill 安装到 agent 的哪个路径 |
 | 质量状态 | `passed` / `failed` / `unchecked` | lint 检测结果 |
 | 类型 | `atomic` / `workflow` | skill 类型 |
 | 设计模式 | `tool-wrapper` / `generator` / `reviewer` / `inversion` / `pipeline` | Google 5 种模式 |
@@ -206,7 +240,11 @@ skill-name/
   "library-path": "D:\\WorkPlace\\VibeCoding\\Skill Library",
   "agents": {
     "<agent-id>": {
-      "path": "C:\\Users\\...\\.claude\\skills",
+      "paths": {
+        "global": "C:\\Users\\...\\.claude\\skills",
+        "project": "D:\\Projects\\xxx\\.claude\\skills"
+      },
+      "agent-type": "claude-code",
       "description": "主开发环境"
     }
   }
@@ -248,12 +286,17 @@ skill-name/
 
 | 操作 | 机制 | 前置检查 | 状态变更 |
 |------|------|----------|----------|
-| mount | `cp -r <skill-dir> <agent-dir>/<name>/` | quality=passed，agent 存在 | agents.skills 写入 mounted |
+| mount | `cp -r <skill-dir> <agent-dir>/<name>/` | quality=passed，agent 存在，scope 合法 | agents.skills 写入 mounted + scope |
 | unmount | `rm -rf <agent-dir>/<name>/` | 已挂载 | agents.skills 清除 |
 | lint | `python -m skill_library.quality.lint` | skill 存在 | skills 写入 quality-status |
 | register | 扫描目录 + 写 state.json | 目录存在 | skills 段新增条目 |
 | init | 创建 config.json + state.json | 无 | 初始化配置 |
 | status | 读 state.json | 无（只读） | 无 |
+
+**scope 参数**：
+- `--scope global`：安装到 agent 的 global-path
+- `--scope project`：安装到 agent 的 project-path
+- 默认值：`global`（向后兼容）
 
 **异常处理**：操作失败时写入 `error` 状态 + 错误原因，不中断后续操作。
 
@@ -340,20 +383,74 @@ skill-name/
 
 ---
 
-## 8. 已知技能包
+## 8. 技能包分类体系
 
-| 技能包 | 说明 | 示例原子 skill | 示例工作流 skill |
-|--------|------|---------------|-----------------|
-| meta | 管理其他 skill | skill-creator | skill-manager-workflow |
-| retrieval | 知识库、文件搜索 | kb-search, file-grep | research-workflow |
-| web | 联网搜索、抓取 | web-search, fetch-page | news-digest-workflow |
-| document | 文档读写、转换 | docx-read, md-convert | doc-export-workflow |
-| development | 编码、调试、测试 | code-lint, test-run | tdd-workflow |
-| devops | 部署、CI/CD | ssh-exec, deploy-cmd | release-workflow |
-| communication | 消息、邮件 | lark-send, mail-compose | meeting-summary-workflow |
-| learning | 教学、知识沉淀 | flashcard, quiz-gen | learning-workflow |
-| security | 安全扫描、漏洞检测 | vuln-scan, secret-check | security-audit-workflow |
-| data | 数据处理、ETL | csv-analyze, json-transform | etl-workflow |
+基于 2026 年社区主流分类（6 大集合，528+ skills, 16 部门）综合设计。共 **17 大类，约 60+ 子类**。
+
+### 8.1 一：核心创作 (Content & Creativity)
+
+| 大类 | ID | 子类 | 说明 |
+|------|----|------|------|
+| **writing** | writing | research / article / blog / book / academic / copy / editing / translation | 写作+研究全链路 |
+| **design** | design | ui-ux / brand / design-system / visual / figma / accessibility / color | 设计系统+品牌 |
+| **media** | media | video / audio / image / animation / social-content / podcast | 富媒体处理 |
+| **document** | document | docx / pdf / pptx / xlsx / epub / markdown / revealjs | 文档格式（Anthropic 官方级） |
+
+### 8.2 二：工程与技术 (Engineering & Tech)
+
+| 大类 | ID | 子类 | 说明 |
+|------|----|------|------|
+| **development** | development | frontend / backend / mobile / architecture / code-review / tdd / debug / refactor / performance | 编码全链路 |
+| **devops** | devops | ci-cd / container / k8s / terraform / monitoring / iac / cloud / serverless | 基础设施与部署 |
+| **data** | data | analysis / engineering / etl / sql / visualization / pipeline / warehouse | 数据全流程 |
+| **ai-ml** | ai-ml | training / inference / llm / nlp / cv / rl / model-ops / agent | AI/ML 专项 |
+| **security** | security | audit / fuzzing / vulnerability / secret-mgmt / compliance / penetration | 安全+合规 |
+
+### 8.3 三：业务与产品 (Business & Product)
+
+| 大类 | ID | 子类 | 说明 |
+|------|----|------|------|
+| **product** | product | prd / roadmap / prioritization / user-research / strategy / analytics / prd-review | PM 全流程 |
+| **marketing** | marketing | seo / geo / content-strategy / ads / email / cro / social / analytics | 营销增长全链路 |
+| **sales** | sales | outreach / proposal / crm / enablement / pipeline / qualification | 销售（可先空） |
+| **finance** | finance | modeling / metrics / reporting / budgeting / saas-metrics / valuation | 财务（可先空） |
+
+### 8.4 四：协作与效率 (Collaboration & Productivity)
+
+| 大类 | ID | 子类 | 说明 |
+|------|----|------|------|
+| **project** | project | agile / task / sprint / meeting / workflow / handoff / pr-review | 项目管理 |
+| **communication** | communication | email / im / meeting-minutes / presentation / newsletter | 通讯（通用能力，不含特定平台） |
+| **knowledge** | knowledge | learning / study / knowledge-graph / memory / wiki / flashcard | 知识管理 |
+
+### 8.5 五：特殊 (Special)
+
+| 大类 | ID | 子类 | 说明 |
+|------|----|------|------|
+| **meta** | meta | skill-mgmt / template / lint / install / upgrade / scope | 元管理（本项目独有） |
+| **utility** | utility | automation / file-ops / scrape / formatter / dev-tools / encoding | 通用工具 |
+
+### 8.6 包版本状态
+
+| 包 | 版本 | 状态 | 优先级 |
+|----|------|------|--------|
+| meta | v1.0.0 | 已实现 | — |
+| development | v0.1.0 | 待创建 | P0 |
+| writing | v0.1.0 | 待创建 | P0 |
+| document | v0.1.0 | 待创建 | P0 |
+| project | v0.1.0 | 待创建 | P1 |
+| marketing | v0.1.0 | 待创建 | P1 |
+| data | v0.1.0 | 待创建 | P1 |
+| design | v0.1.0 | 待创建 | P1 |
+| knowledge | v0.1.0 | 待创建 | P1 |
+| utility | v0.1.0 | 待创建 | P1 |
+| devops | v0.1.0 | 待创建 | P2 |
+| security | v0.1.0 | 待创建 | P2 |
+| ai-ml | v0.1.0 | 待创建 | P2 |
+| media | v0.1.0 | 待创建 | P2 |
+| communication | v0.1.0 | 待创建 | P2 |
+| sales | v0.1.0 | 待创建 | P3 |
+| finance | v0.1.0 | 待创建 | P3 |
 
 ---
 

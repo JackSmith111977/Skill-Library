@@ -1,0 +1,16 @@
+{
+  "name": "writing",
+  "version": "1.0.0",
+  "description": "写作与研究 — article, blog, academic, copy, research, editing, translation",
+  "skills": [
+    "research-assistant",
+    "article-writer",
+    "copy-editor",
+    "blog-post-writer",
+    "academic-writer",
+    "writing-pipeline",
+    "content-research"
+  ],
+  "dependencies": [],
+  "updated": "2026-05-24"
+}
