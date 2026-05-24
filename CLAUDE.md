@@ -20,6 +20,7 @@ Agent Skill Library — 跨项目的 skill 管理系统。元 skill 管理其他
 | `CLAUDE.md` | 开发规则（Rules） | 规则变更时 |
 | `docs-alignment.json` | 文档对齐状态 | 版本变更时 |
 | `LESSONS.md` | 项目教训记录 | 新问题发现时 |
+| `test-guide.md` | E2E 验证测试指南 | 版本发布前 |
 
 ## 需求新增流程
 

@@ -26,6 +26,12 @@
       "status": "aligned",
       "role": "开发进度索引（19 个 Epic，102 个 Story）"
     },
+    "test-guide.md": {
+      "version": "1.0.0",
+      "updated": "2026-05-24",
+      "status": "aligned",
+      "role": "E2E 验证测试指南（5 Phase，16 项测试）"
+    },
     "research/skill-classification-and-quality.md": {
       "version": "1.0.0",
       "updated": "2026-05-23",
