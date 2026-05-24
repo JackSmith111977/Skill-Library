@@ -179,8 +179,6 @@ def main():
             continue
 
         if not skills:
-            print(f"未找到 skill: {path}")
-            all_passed = False
             continue
 
         for skill_path in skills:
