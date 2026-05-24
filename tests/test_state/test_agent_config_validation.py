@@ -14,53 +14,53 @@ def manager(tmp_path):
 class TestAgentConfigValidation:
     """E10-S4: Agent 配置验证"""
 
-    def test_validate_agent_type_valid(self, manager):
+    def test_validate_agent_type_valid(self, manager, tmp_path):
         """有效 agent-type 通过验证"""
         config = {
-            "library-path": "C:\\lib",
+            "library-path": str(tmp_path / "lib"),
             "agents": {
-                "agent-1": {"path": "C:\\agents\\a1", "agent-type": "claude-code"}
+                "agent-1": {"path": str(tmp_path / "agents" / "a1"), "agent-type": "claude-code"}
             }
         }
         errors = manager.validate_paths(config)
         assert errors == []
 
-    def test_validate_agent_type_invalid(self, manager):
+    def test_validate_agent_type_invalid(self, manager, tmp_path):
         """无效 agent-type 报错"""
         config = {
-            "library-path": "C:\\lib",
+            "library-path": str(tmp_path / "lib"),
             "agents": {
-                "agent-1": {"path": "C:\\agents\\a1", "agent-type": "not-a-real-type"}
+                "agent-1": {"path": str(tmp_path / "agents" / "a1"), "agent-type": "not-a-real-type"}
             }
         }
         errors = manager.validate_paths(config)
         assert any("type" in e for e in errors)
 
-    def test_validate_agent_skill_packs_valid(self, manager):
+    def test_validate_agent_skill_packs_valid(self, manager, tmp_path):
         config = {
-            "library-path": "C:\\lib",
+            "library-path": str(tmp_path / "lib"),
             "agents": {
-                "agent-1": {"path": "C:\\agents\\a1", "skill-packs": ["dev", "ai"]}
+                "agent-1": {"path": str(tmp_path / "agents" / "a1"), "skill-packs": ["dev", "ai"]}
             }
         }
         errors = manager.validate_paths(config)
         assert errors == []
 
-    def test_validate_agent_skill_packs_not_list(self, manager):
+    def test_validate_agent_skill_packs_not_list(self, manager, tmp_path):
         config = {
-            "library-path": "C:\\lib",
+            "library-path": str(tmp_path / "lib"),
             "agents": {
-                "agent-1": {"path": "C:\\agents\\a1", "skill-packs": "not-a-list"}
+                "agent-1": {"path": str(tmp_path / "agents" / "a1"), "skill-packs": "not-a-list"}
             }
         }
         errors = manager.validate_paths(config)
         assert any("必须是数组" in e for e in errors)
 
-    def test_validate_agent_skill_packs_bad_element(self, manager):
+    def test_validate_agent_skill_packs_bad_element(self, manager, tmp_path):
         config = {
-            "library-path": "C:\\lib",
+            "library-path": str(tmp_path / "lib"),
             "agents": {
-                "agent-1": {"path": "C:\\agents\\a1", "skill-packs": [1, 2, 3]}
+                "agent-1": {"path": str(tmp_path / "agents" / "a1"), "skill-packs": [1, 2, 3]}
             }
         }
         errors = manager.validate_paths(config)

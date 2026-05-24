@@ -19,14 +19,13 @@ def manager(tmp_config):
     return ConfigManager(tmp_config)
 
 
-@pytest.fixture
-def sample_config():
-    """示例配置数据"""
+def _abs_config(base):
+    """用 tmp_path 生成平台无关绝对路径的配置"""
     return {
-        "library-path": "D:\\WorkPlace\\VibeCoding\\Skill Library",
+        "library-path": str(base / "lib"),
         "agents": {
             "claude-code-main": {
-                "path": "C:\\Users\\Kei\\.claude\\skills",
+                "path": str(base / "claude" / "skills"),
                 "description": "主开发环境"
             }
         }
@@ -35,11 +34,12 @@ def sample_config():
 
 # ===== load 测试 =====
 
-def test_load_valid(manager, tmp_config, sample_config):
+def test_load_valid(manager, tmp_config, tmp_path):
     """加载合法 config.json"""
-    tmp_config.write_text(json.dumps(sample_config), encoding="utf-8")
+    config = _abs_config(tmp_path)
+    tmp_config.write_text(json.dumps(config), encoding="utf-8")
     result = manager.load()
-    assert result == sample_config
+    assert result == config
 
 
 def test_load_missing(manager):
@@ -57,26 +57,29 @@ def test_load_invalid_json(manager, tmp_config):
 
 # ===== save 测试 =====
 
-def test_save_creates_file(manager, sample_config):
+def test_save_creates_file(manager, tmp_path):
     """save 创建文件"""
+    config = _abs_config(tmp_path)
     assert not manager.path.exists()
-    manager.save(sample_config)
+    manager.save(config)
     assert manager.path.exists()
 
 
-def test_save_content_correct(manager, sample_config):
+def test_save_content_correct(manager, tmp_path):
     """save 内容正确"""
-    manager.save(sample_config)
+    config = _abs_config(tmp_path)
+    manager.save(config)
     with open(manager.path, "r", encoding="utf-8") as f:
         result = json.load(f)
-    assert result == sample_config
+    assert result == config
 
 
-def test_save_creates_parent_dirs(tmp_path, sample_config):
+def test_save_creates_parent_dirs(tmp_path):
     """save 自动创建父目录"""
     nested_path = tmp_path / "a" / "b" / "config.json"
     manager = ConfigManager(nested_path)
-    manager.save(sample_config)
+    config = _abs_config(tmp_path)
+    manager.save(config)
     assert nested_path.exists()
 
 
@@ -90,10 +93,10 @@ def test_save_invalid_library_path(manager):
         manager.save(config)
 
 
-def test_save_invalid_agent_path(manager):
+def test_save_invalid_agent_path(manager, tmp_path):
     """agent path 不是绝对路径 → 抛出异常"""
     config = {
-        "library-path": "D:\\test",
+        "library-path": str(tmp_path / "lib"),
         "agents": {
             "test-agent": {"path": "relative/path"}
         }
@@ -111,9 +114,10 @@ def test_save_missing_library_path(manager):
 
 # ===== validate_paths 测试 =====
 
-def test_validate_absolute_paths(manager, sample_config):
+def test_validate_absolute_paths(manager, tmp_path):
     """绝对路径 → 校验通过"""
-    errors = manager.validate_paths(sample_config)
+    config = _abs_config(tmp_path)
+    errors = manager.validate_paths(config)
     assert errors == []
 
 
@@ -125,10 +129,10 @@ def test_validate_relative_library_path(manager):
     assert "绝对路径" in errors[0]
 
 
-def test_validate_relative_agent_path(manager):
+def test_validate_relative_agent_path(manager, tmp_path):
     """相对 agent path → 校验失败"""
     config = {
-        "library-path": "D:\\test",
+        "library-path": str(tmp_path / "lib"),
         "agents": {"test-agent": {"path": "relative"}}
     }
     errors = manager.validate_paths(config)
@@ -144,10 +148,10 @@ def test_validate_missing_library_path(manager):
     assert "缺少" in errors[0]
 
 
-def test_validate_missing_agent_path(manager):
+def test_validate_missing_agent_path(manager, tmp_path):
     """agent 缺少 path → 校验失败"""
     config = {
-        "library-path": "D:\\test",
+        "library-path": str(tmp_path / "lib"),
         "agents": {"test-agent": {"description": "test"}}
     }
     errors = manager.validate_paths(config)
@@ -170,8 +174,9 @@ def test_validate_multiple_errors(manager):
 
 # ===== 集成测试 =====
 
-def test_load_save_roundtrip(manager, sample_config):
+def test_load_save_roundtrip(manager, tmp_path):
     """load → save → load 往返测试"""
-    manager.save(sample_config)
+    config = _abs_config(tmp_path)
+    manager.save(config)
     loaded = manager.load()
-    assert loaded == sample_config
+    assert loaded == config

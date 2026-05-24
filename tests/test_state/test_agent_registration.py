@@ -16,43 +16,47 @@ def sm(tmp_path):
 class TestAgentRegistration:
     """E10-S1: Agent 注册"""
 
-    def test_register_agent(self, sm):
-        result = sm.register_agent("claude-main", "claude-code", "C:\\agents\\claude")
+    def test_register_agent(self, sm, tmp_path):
+        path = str(tmp_path / "agents" / "claude")
+        result = sm.register_agent("claude-main", "claude-code", path)
         assert result["agent-type"] == "claude-code"
-        assert result["path"] == "C:\\agents\\claude"
+        assert result["path"] == path
         assert result["skills"] == {}
 
-    def test_register_duplicate(self, sm):
-        sm.register_agent("agent-1", "generic", "C:\\agents\\a1")
+    def test_register_duplicate(self, sm, tmp_path):
+        path = str(tmp_path / "agents" / "a1")
+        sm.register_agent("agent-1", "generic", path)
         with pytest.raises(KeyError, match="已注册"):
-            sm.register_agent("agent-1", "generic", "C:\\agents\\a1")
+            sm.register_agent("agent-1", "generic", path)
 
-    def test_register_invalid_type(self, sm):
+    def test_register_invalid_type(self, sm, tmp_path):
         with pytest.raises(ValueError):
-            sm.register_agent("bad-agent", "invalid-type", "C:\\agents\\bad")
+            sm.register_agent("bad-agent", "invalid-type", str(tmp_path / "agents" / "bad"))
 
     def test_register_relative_path(self, sm):
         with pytest.raises(ValueError, match="绝对路径"):
             sm.register_agent("bad-agent", "generic", "relative/path")
 
-    def test_unregister_agent(self, sm):
-        sm.register_agent("agent-1", "generic", "C:\\agents\\a1")
+    def test_unregister_agent(self, sm, tmp_path):
+        path = str(tmp_path / "agents" / "a1")
+        sm.register_agent("agent-1", "generic", path)
         assert sm.unregister_agent("agent-1") is True
 
     def test_unregister_nonexistent(self, sm):
         with pytest.raises(KeyError, match="未注册"):
             sm.unregister_agent("nonexistent")
 
-    def test_list_agents(self, sm):
-        sm.register_agent("a1", "generic", "C:\\a1")
-        sm.register_agent("a2", "claude-code", "C:\\a2")
+    def test_list_agents(self, sm, tmp_path):
+        sm.register_agent("a1", "generic", str(tmp_path / "a1"))
+        sm.register_agent("a2", "claude-code", str(tmp_path / "a2"))
         agents = sm.list_agents()
         assert len(agents) == 2
         assert "a1" in agents
         assert "a2" in agents
 
-    def test_get_agent(self, sm):
-        sm.register_agent("test-agent", "generic", "C:\\test")
+    def test_get_agent(self, sm, tmp_path):
+        path = str(tmp_path / "test_agent")
+        sm.register_agent("test-agent", "generic", path)
         result = sm.get_agent("test-agent")
         assert result is not None
         assert result["agent-type"] == "generic"
@@ -64,12 +68,14 @@ class TestAgentRegistration:
 class TestAgentIsolation:
     """E10-S2: Agent 隔离存储"""
 
-    def test_mount_to_agent(self, sm):
-        sm.register_agent("agent-1", "generic", "C:\\a1")
-        sm.init_library("C:\\lib")
+    def test_mount_to_agent(self, sm, tmp_path):
+        agent_path = str(tmp_path / "agents" / "a1")
+        lib_path = str(tmp_path / "lib")
+        sm.register_agent("agent-1", "generic", agent_path)
+        sm.init_library(lib_path)
         sm._sm.save({
-            "library": {"path": "C:\\lib"},
-            "agents": {"agent-1": {"path": "C:\\a1", "agent-type": "generic", "skill-packs": [], "skills": {}}},
+            "library": {"path": lib_path},
+            "agents": {"agent-1": {"path": agent_path, "agent-type": "generic", "skill-packs": [], "skills": {}}},
             "skills": {
                 "test-skill": {"name": "test-skill", "version": "1.0.0", "mount-status": "unmounted", "mounted-to": []}
             }
@@ -78,26 +84,28 @@ class TestAgentIsolation:
         assert result["status"] == "mounted"
         assert result["load-mode"] == "session"
 
-    def test_mount_to_nonexistent_agent(self, sm):
-        sm.init_library("C:\\lib")
+    def test_mount_to_nonexistent_agent(self, sm, tmp_path):
+        sm.init_library(str(tmp_path / "lib"))
         sm._sm.save({
-            "library": {"path": "C:\\lib"},
+            "library": {"path": str(tmp_path / "lib")},
             "agents": {},
             "skills": {"s": {"name": "s", "mount-status": "unmounted"}}
         })
         with pytest.raises(KeyError, match="未注册"):
             sm.mount_to_agent("s", "no-agent")
 
-    def test_mount_nonexistent_skill(self, sm):
-        sm.register_agent("a1", "generic", "C:\\a1")
+    def test_mount_nonexistent_skill(self, sm, tmp_path):
+        sm.register_agent("a1", "generic", str(tmp_path / "a1"))
         with pytest.raises(KeyError, match="未注册"):
             sm.mount_to_agent("no-skill", "a1")
 
-    def test_unmount_from_agent(self, sm):
+    def test_unmount_from_agent(self, sm, tmp_path):
+        lib_path = str(tmp_path / "lib")
+        agent_path = str(tmp_path / "a1")
         sm._sm.save({
-            "library": {"path": "C:\\lib"},
+            "library": {"path": lib_path},
             "agents": {
-                "a1": {"path": "C:\\a1", "agent-type": "generic", "skill-packs": [], "skills": {
+                "a1": {"path": agent_path, "agent-type": "generic", "skill-packs": [], "skills": {
                     "s1": {"status": "mounted", "version": "1.0", "adapter": "generic", "load-mode": "session"}
                 }}
             },
@@ -105,20 +113,20 @@ class TestAgentIsolation:
         })
         assert sm.unmount_from_agent("s1", "a1") is True
 
-    def test_unmount_not_mounted(self, sm):
+    def test_unmount_not_mounted(self, sm, tmp_path):
         sm._sm.save({
-            "library": {"path": "C:\\lib"},
-            "agents": {"a1": {"path": "C:\\a1", "agent-type": "generic", "skill-packs": [], "skills": {}}},
+            "library": {"path": str(tmp_path / "lib")},
+            "agents": {"a1": {"path": str(tmp_path / "a1"), "agent-type": "generic", "skill-packs": [], "skills": {}}},
             "skills": {"s1": {"name": "s1", "mount-status": "unmounted", "mounted-to": []}}
         })
         with pytest.raises(KeyError, match="未挂载"):
             sm.unmount_from_agent("s1", "a1")
 
-    def test_get_agent_skills(self, sm):
+    def test_get_agent_skills(self, sm, tmp_path):
         sm._sm.save({
-            "library": {"path": "C:\\lib"},
+            "library": {"path": str(tmp_path / "lib")},
             "agents": {
-                "a1": {"path": "C:\\a1", "agent-type": "generic", "skill-packs": [], "skills": {
+                "a1": {"path": str(tmp_path / "a1"), "agent-type": "generic", "skill-packs": [], "skills": {
                     "s1": {"status": "mounted", "version": "1.0", "adapter": "generic", "load-mode": "session"}
                 }}
             },
@@ -131,15 +139,15 @@ class TestAgentIsolation:
         with pytest.raises(KeyError):
             sm.get_agent_skills("no-agent")
 
-    def test_isolation_between_agents(self, sm):
+    def test_isolation_between_agents(self, sm, tmp_path):
         """同一 skill 在不同 agent 有独立状态"""
         sm._sm.save({
-            "library": {"path": "C:\\lib"},
+            "library": {"path": str(tmp_path / "lib")},
             "agents": {
-                "a1": {"path": "C:\\a1", "agent-type": "generic", "skill-packs": [], "skills": {
+                "a1": {"path": str(tmp_path / "a1"), "agent-type": "generic", "skill-packs": [], "skills": {
                     "s1": {"status": "mounted", "version": "1.0", "adapter": "generic", "load-mode": "session"}
                 }},
-                "a2": {"path": "C:\\a2", "agent-type": "generic", "skill-packs": [], "skills": {
+                "a2": {"path": str(tmp_path / "a2"), "agent-type": "generic", "skill-packs": [], "skills": {
                     "s1": {"status": "mounted", "version": "2.0", "adapter": "claude-code", "load-mode": "turn"}
                 }}
             },
